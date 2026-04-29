@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gamefowl Pro</title>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <h1>Gamefowl Pro Breeder System</h1>
+</header>
+
+<nav>
+  <button onclick="showTab('evaluate')">Evaluate</button>
+  <button onclick="showTab('decision')">Decision</button>
+  <button onclick="showTab('records')">Records</button>
+</nav>
+
+<main>
+
+<section id="evaluate" class="tab active">
+  <h2>Evaluate Bird</h2>
+
+  <input id="band" placeholder="Band ID">
+
+  <label>Score (1-10)</label>
+  <input type="range" id="score" min="1" max="10" value="5">
+
+  <button onclick="save()">Save</button>
+</section>
+
+<section id="decision" class="tab">
+  <h2>Decision</h2>
+  <div id="result"></div>
+</section>
+
+<section id="records" class="tab">
+  <h2>Records</h2>
+  <div id="recordsList"></div>
+</section>
+
+</main>
+
+<script src="app.js"></script>
+
+</body>
+</html>

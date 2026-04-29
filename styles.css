@@ -1,0 +1,40 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #fff;
+  margin: 0;
+}
+
+header {
+  background: #222;
+  padding: 15px;
+  text-align: center;
+}
+
+nav {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  background: orange;
+  font-weight: bold;
+}
+
+.tab {
+  display: none;
+  padding: 15px;
+}
+
+.tab.active {
+  display: block;
+}
+
+input {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+}
