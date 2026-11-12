@@ -38,3 +38,10 @@ input {
   margin: 10px 0;
   padding: 8px;
 }
+.navlink {
+  padding: 10px;
+  background: #d6b25e;
+  color: #111;
+  font-weight: bold;
+  text-decoration: none;
+}

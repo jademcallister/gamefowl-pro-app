@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0c0a">
+<title>Under The Feather · Gamefowl Anatomy</title>
+<meta name="description" content="Interactive gamefowl anatomy: skeleton, muscles in layers and exterior points, with courses, daily challenges and a breed library.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="stage">
+
+  <!-- Desktop-only intro column -->
+  <aside class="intro">
+    <div class="logo-row">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 50c-2-8 0-15 6-20-6 0-10-3-11-8 4 2 8 2 11 0-2-4-1-9 3-12 0 4 2 6 5 7 1-4 4-7 8-7-2 3-2 6 0 8 4 1 7 4 8 8-3-1-6-1-8 1 4 4 5 10 2 16-2 4-6 7-11 8l-4-6c4-1 7-3 8-7 1-5-3-9-8-9-6 0-10 5-10 11 0 4 1 7 3 10z" fill="currentColor"/></svg>
+      <div><div class="logo-sub">Under The</div><div class="logo-main">FEATHER</div></div>
+    </div>
+    <p class="eyebrow">— Explore the gamefowl —</p>
+    <h1>See the gamefowl <em>differently.</em></h1>
+    <p class="lede">Explore the bird layer by layer: skeleton, muscles and exterior points. Tap any structure to learn what it does, where it attaches and what breeders look for.</p>
+    <ul class="feat">
+      <li><b>Skeletal. Muscular. Exterior.</b> Tap any structure to learn about it.</li>
+      <li><b>Go beyond the name.</b> Tap underlined terms for their Latin and Greek origins.</li>
+      <li><b>Learn something every day.</b> Daily challenges, streaks and bite-sized courses.</li>
+      <li><b>Breed library.</b> Aseel, Shamo, Old English Game, American Game and more.</li>
+    </ul>
+    <p class="fine">Educational content for breeders and exhibitors. Not veterinary advice.</p>
+  </aside>
+
+  <!-- The app -->
+  <div class="phone">
+    <div class="app" id="app">
+      <main id="screen" class="screen"></main>
+      <nav class="tabbar" aria-label="Main">
+        <button data-tab="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+        <button data-tab="explore"><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7zm0 2.3L5.3 8 12 11.7 18.7 8zM5 9.7v6.1l6 3.4v-6.1zm14 0l-6 3.4v6.1l6-3.4z"/></svg><span>Explorer</span></button>
+        <button data-tab="courses"><svg viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v15h-6a2 2 0 0 0-2 2 2 2 0 0 0-2-2H4z"/></svg><span>Courses</span></button>
+        <button data-tab="account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7z"/></svg><span>Account</span></button>
+      </nav>
+      <div id="sheet" class="sheet" aria-hidden="true"></div>
+      <div id="tip" class="tip" role="tooltip"></div>
+      <div id="toast" class="toast"></div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="bird.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
