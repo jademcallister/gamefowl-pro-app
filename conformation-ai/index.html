@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gamefowl Pro Conformation Analyzer</title>
+<meta name="description" content="AI conformation and soundness analysis for gamefowl from photos and walking video: a three-judge AI panel, angle measurements, bird history and side-by-side comparison." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><span class="logo">🐓</span><div><b>Gamefowl Pro</b><small>Conformation Analyzer</small></div></div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="analyze" class="on">Analyze</button>
+    <button role="tab" data-tab="birds">My Birds</button>
+    <button role="tab" data-tab="compare">Compare</button>
+    <button role="tab" data-tab="guide">Guide</button>
+  </nav>
+</header>
+
+<main>
+<!-- ANALYZE -->
+<section class="tab on" id="tab-analyze">
+  <div class="intro">
+    <h1>Know your bird’s build <span>before you breed it.</span></h1>
+    <p>Photos and a short walking video go to a panel of three AI judges. Each scores the 8 conformation checkpoints, flags soundness concerns, and a head judge sums it up. Measure angles yourself, track every bird over time and compare candidates side by side.</p>
+  </div>
+
+  <div class="card step">
+    <h2><i>1</i> The bird</h2>
+    <div class="grid2">
+      <label>Band / name<input id="f-band" placeholder="e.g. RR-114"></label>
+      <label>Sex &amp; age
+        <select id="f-cls"><option>Cock (over 1 yr)</option><option>Hen (over 1 yr)</option><option>Stag (under 1 yr)</option><option>Pullet (under 1 yr)</option></select>
+      </label>
+      <label>Line / bloodline<input id="f-line" placeholder="e.g. Red Rock Black NRH"></label>
+      <label>Crested (Toppy)?
+        <select id="f-crest"><option value="no">No</option><option value="yes">Yes</option></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="card step">
+    <h2><i>2</i> Photos <small>side profile required · more views = fewer “not checked”</small></h2>
+    <div class="slots" id="slots"></div>
+    <p class="hint">Plain background, bird standing naturally, camera at bird height, whole bird in frame. Each photo gets an instant quality check.</p>
+  </div>
+
+  <div class="card step">
+    <h2><i>3</i> Walking video <small>optional · for gait</small></h2>
+    <label class="vid-pick">🎥 Choose a short video of the bird walking and turning<input type="file" id="f-video" accept="video/*"></label>
+    <div class="frames" id="frames"></div>
+    <p class="hint">5–15 seconds, filmed from the side, bird walking calmly on flat ground. Key frames are pulled out on your device.</p>
+  </div>
+
+  <div class="card step">
+    <h2><i>4</i> Run the panel</h2>
+    <div class="judges">
+      <div><b>🦶 Soundness</b><span>Toes, feet, hocks, stance &amp; gait</span></div>
+      <div><b>⚖️ Type &amp; Balance</b><span>Body, keel, wings, tail set</span></div>
+      <div><b>👁️ Breeder’s Eye</b><span>Whole bird, head &amp; line fit</span></div>
+    </div>
+    <button class="btn" id="run" type="button">Analyze Bird</button>
+    <p class="status" id="status" aria-live="polite"></p>
+  </div>
+
+  <div id="result"></div>
+</section>
+
+<!-- BIRDS -->
+<section class="tab" id="tab-birds">
+  <h1 class="ttl">My Birds</h1>
+  <p class="hint">Every saved analysis, grouped by bird, with the score trend over time. Saved on this device.</p>
+  <div id="birdList" class="birds"></div>
+  <div class="row-btns">
+    <button class="btn ghost" id="exportBtn" type="button">Export backup</button>
+    <label class="btn ghost">Import backup<input type="file" id="importFile" accept="application/json" hidden></label>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="tab" id="tab-compare">
+  <h1 class="ttl">Compare Birds</h1>
+  <p class="hint">Pick up to three saved analyses — for choosing a brood cock or the best of a hatch.</p>
+  <div class="pickers" id="pickers"></div>
+  <div id="compareOut"></div>
+</section>
+
+<!-- GUIDE -->
+<section class="tab" id="tab-guide">
+  <h1 class="ttl">How Birds Are Analyzed</h1>
+  <ol class="points" id="pointList"></ol>
+  <div class="card">
+    <h2>Your line standard</h2>
+    <p class="hint">Describe the ideal for your line. The Breeder’s Eye judge comments on how each bird fits it (comments only — it doesn’t change the 8-point score).</p>
+    <div class="grid2" id="stdForm">
+      <label>Ideal body type<input data-std="body" placeholder="e.g. medium, wedge-shaped, tight feathered"></label>
+      <label>Leg color<input data-std="legs" placeholder="e.g. yellow"></label>
+      <label>Eye color<input data-std="eyes" placeholder="e.g. red / pearl"></label>
+      <label>Tail angle<input data-std="tail" placeholder="e.g. about 45° above the back"></label>
+      <label>Hackle color<input data-std="hackle" placeholder="e.g. black"></label>
+      <label>Other notes<input data-std="notes" placeholder="anything else that defines the line"></label>
+    </div>
+    <p class="status ok" id="stdSaved"></p>
+  </div>
+  <div class="card">
+    <h2>Good to know</h2>
+    <ul class="plain">
+      <li>AI scores are an assistant’s opinion from photos. Handle the bird to confirm anything that matters.</li>
+      <li>Soundness flags are not a diagnosis. Check the bird hands-on and see a vet if it looks serious.</li>
+      <li>This tool analyzes conformation, soundness and breed type only. It never rates fighting ability.</li>
+      <li>Photos are sent to Claude for analysis. Saved results stay on this device unless you export them.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<!-- Measure tool -->
+<div class="modal" id="measure" hidden>
+  <div class="mbox">
+    <div class="mhead">
+      <b>📐 Measure</b>
+      <select id="m-kind">
+        <option value="Hock angle|3">Hock angle (3 taps: thigh · hock · foot)</option>
+        <option value="Tail angle|3">Tail angle (3 taps: tail tip · tail base · shoulder)</option>
+        <option value="Back line|2">Back line slope (2 taps: shoulder · tail base)</option>
+        <option value="Shank to ground|2">Shank angle (2 taps: hock · foot)</option>
+        <option value="Custom angle|3">Custom angle (3 taps)</option>
+      </select>
+      <button type="button" id="m-close" aria-label="Close">✕</button>
+    </div>
+    <div class="mcanvas"><canvas id="m-canvas"></canvas></div>
+    <div class="mfoot"><span id="m-read">Tap points on the photo.</span><button class="btn small ghost" id="m-undo" type="button">Undo</button><button class="btn small" id="m-save" type="button" disabled>Save measurement</button></div>
+    <ul class="mlist" id="m-list"></ul>
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
