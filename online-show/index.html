@@ -24,6 +24,7 @@
   <a href="#entries">Entries</a>
   <a href="#classes">Classes</a>
   <a href="#judging">Judging</a>
+  <a href="#ai-panel">AI Panel</a>
   <a href="#fan">Fan Show</a>
   <a href="#sponsors">Sponsors</a>
   <a href="../index.html">Breeder App</a>
@@ -56,6 +57,7 @@
     <a href="#classes">See the Classes</a>
     <a href="#dates">Check Show Dates</a>
     <a href="#judging">Learn the Judging</a>
+    <a href="#ai-panel">Try the AI Judges</a>
     <a href="#sponsors">Sponsor an Award</a>
   </div>
 </section>
@@ -149,6 +151,27 @@
   </div>
 </section>
 
+<section class="sec ai" id="ai-panel">
+  <div class="wrap">
+    <h2 class="h2">🤖 AI Judging Panel</h2>
+    <p>Three AI judges score your bird’s photos on the same 8 checkpoints, each with a different focus. The panel takes the middle score on every checkpoint, flags soundness concerns, and a head judge writes the comments. <strong>AI scores are advisory — a human judge confirms every placing and reviews any flag.</strong></p>
+    <div class="ai-judges">
+      <div><b>🦶 Soundness Judge</b><span>Toes, feet, hocks, stance</span></div>
+      <div><b>⚖️ Type &amp; Balance Judge</b><span>Body, keel, wings, tail set</span></div>
+      <div><b>👁️ Breeder’s Eye Judge</b><span>Whole bird, neck, head, crest</span></div>
+    </div>
+    <div class="ai-form">
+      <label>Bird band or name<input id="ai-band" placeholder="e.g. RR-114"></label>
+      <label>Class<select id="ai-class"><option value="">Choose a class…</option></select></label>
+    </div>
+    <div class="ai-slots" id="ai-slots"></div>
+    <p class="small">* Side profile required. Plain background, good light, bird standing naturally. More views = fewer “not checked”.</p>
+    <button class="btn-solid" id="ai-run" type="button">Run AI Judging Panel</button>
+    <p class="ai-status" id="ai-status" aria-live="polite"></p>
+    <div class="ai-results" id="ai-results"></div>
+  </div>
+</section>
+
 <section class="sec alt" id="enter">
   <div class="wrap narrow">
     <h2 class="h2">Enter a Bird</h2>
@@ -214,5 +237,6 @@
 
 <script src="config.js"></script>
 <script src="script.js"></script>
+<script src="ai-panel.js"></script>
 </body>
 </html>
