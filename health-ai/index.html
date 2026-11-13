@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gamefowl Pro Flock Health</title>
+<meta name="description" content="Poultry health and disease checker for backyard chickens and gamefowl: tap-a-body-area symptom checker, AI photo health panel, urgency and biosecurity guidance, health log and vet report." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="logo">🩺</span>
+    <div><b>Gamefowl Pro</b><small>Flock Health</small></div>
+    <div class="mode" role="group" aria-label="Flock type">
+      <button type="button" data-mode="backyard" class="on">🐔 Backyard</button>
+      <button type="button" data-mode="gamefowl">🐓 Gamefowl</button>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="check" class="on">Health Check</button>
+    <button role="tab" data-tab="log">Health Log</button>
+    <button role="tab" data-tab="diseases">Disease Guide</button>
+    <button role="tab" data-tab="help">When to Call</button>
+  </nav>
+</header>
+
+<main>
+<!-- CHECK -->
+<section class="tab on" id="tab-check">
+  <div class="banner-911">🚨 Several birds sick or dying suddenly? Don’t wait for the app. Keep birds and eggs on the property and call your vet, state veterinarian, or the USDA sick-bird line <a href="tel:18665367593">1-866-536-7593</a>.</div>
+
+  <div class="intro">
+    <h1>What’s wrong with my bird? <span>Let’s find out together.</span></h1>
+    <p>Tap where you see a problem, add a few photos, and a panel of three AI health reviewers tells you how urgent it is, what it might be, and what to do right now. It isn’t a vet, but it helps you know when you need one.</p>
+  </div>
+
+  <div class="card step">
+    <h2><i>1</i> The bird</h2>
+    <div class="grid3">
+      <label>Name / band<input id="b-name" placeholder="e.g. Henrietta or RR-114"></label>
+      <label>Age
+        <select id="b-age"><option value="">Choose…</option><option>Chick (under 8 weeks)</option><option>Grower (8–20 weeks)</option><option>Adult (laying / breeding age)</option><option>Older (4+ years)</option></select>
+      </label>
+      <label>Sex
+        <select id="b-sex"><option value="">Choose…</option><option>Hen / pullet</option><option>Rooster / cock / stag</option><option>Unknown</option></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="card step">
+    <h2><i>2</i> Where do you see a problem? <small>tap an area, then the signs you see</small></h2>
+    <div class="picker">
+      <div class="diagram" id="diagram">
+        <svg viewBox="0 0 400 300" aria-label="Chicken diagram" role="img">
+          <ellipse cx="200" cy="292" rx="150" ry="6" fill="#d9e4df"/>
+          <path d="M70 120 C40 70 60 40 95 60 C110 30 140 40 140 75 C150 60 165 70 160 95 Z" fill="#c9785b"/>
+          <ellipse cx="190" cy="165" rx="115" ry="72" fill="#d9925f"/>
+          <path d="M250 135 C255 95 268 70 290 62 L318 70 C318 105 300 130 285 160 Z" fill="#d9925f"/>
+          <circle cx="306" cy="68" r="28" fill="#e2a06b"/>
+          <path d="M288 44 q6 -16 12 -2 q6 -16 12 -1 q6 -14 11 2 q3 6 -2 9 Z" fill="#c8323a"/>
+          <path d="M318 88 q4 20 -8 22 q-8 -4 -2 -20 Z" fill="#c8323a"/>
+          <path d="M332 66 L360 74 L332 80 Z" fill="#e8b34b"/>
+          <circle cx="314" cy="62" r="4" fill="#1d2b25"/>
+          <path d="M130 150 C170 130 230 140 250 175 C210 190 160 190 130 150 Z" fill="#c07a4c"/>
+          <line x1="175" y1="230" x2="170" y2="282" stroke="#e8b34b" stroke-width="8" stroke-linecap="round"/>
+          <line x1="215" y1="230" x2="222" y2="282" stroke="#e8b34b" stroke-width="8" stroke-linecap="round"/>
+          <path d="M150 286 L190 286 M200 286 L245 286" stroke="#e8b34b" stroke-width="6" stroke-linecap="round"/>
+          <ellipse cx="60" cy="275" rx="14" ry="6" fill="#8a7a58"/>
+        </svg>
+        <div id="hotspots"></div>
+      </div>
+      <div class="sympanel">
+        <div class="areas" id="areaList"></div>
+        <div class="symlist" id="symList"><p class="hint">Choose an area to see its signs.</p></div>
+      </div>
+    </div>
+    <div class="chosen" id="chosen"></div>
+    <div class="flagbox" id="flagbox" hidden></div>
+    <div class="local" id="local"></div>
+  </div>
+
+  <div class="card step">
+    <h2><i>3</i> A little history</h2>
+    <div class="grid3">
+      <label>How long?<select data-h="duration"><option value="">Choose…</option><option>Started today</option><option>1–3 days</option><option>About a week</option><option>Longer than a week</option></select></label>
+      <label>How many birds?<select data-h="how_many"><option value="">Choose…</option><option>Just this one</option><option>2–3 birds</option><option>Many birds</option></select></label>
+      <label>Any deaths?<select data-h="deaths"><option value="">Choose…</option><option>None</option><option>One</option><option>Several</option></select></label>
+      <label>New birds, show or swap in last 30 days?<select data-h="new_birds"><option value="">Choose…</option><option>No</option><option>Yes</option></select></label>
+      <label>Wild birds or ducks near the flock?<select data-h="wild_birds"><option value="">Choose…</option><option>No</option><option>Sometimes</option><option>Often</option></select></label>
+      <label>Weather<select data-h="weather"><option value="">Choose…</option><option>Very hot</option><option>Mild</option><option>Freezing</option><option>Wet / damp</option></select></label>
+    </div>
+    <label class="full">Anything else? (feed change, injuries, what you’ve tried)<input data-h="notes" placeholder="e.g. switched feed last week, she’s still drinking"></label>
+  </div>
+
+  <div class="card step">
+    <h2><i>4</i> Photos <small>optional but recommended</small></h2>
+    <div class="slots" id="slots"></div>
+    <p class="hint">Good light, close enough to see detail. A droppings photo helps with gut problems.</p>
+  </div>
+
+  <div class="card step">
+    <h2><i>5</i> Ask the health panel</h2>
+    <div class="panel3">
+      <div><b>🔎 Signs Examiner</b><span>Reads the photos</span></div>
+      <div><b>🧪 Differential Specialist</b><span>Weighs signs & history</span></div>
+      <div><b>🛡️ Biosecurity Officer</b><span>Urgency & flock safety</span></div>
+    </div>
+    <button class="btn" id="run" type="button">Check My Bird</button>
+    <p class="status" id="status" aria-live="polite"></p>
+  </div>
+
+  <div id="result"></div>
+</section>
+
+<!-- LOG -->
+<section class="tab" id="tab-log">
+  <h1 class="ttl">Health Log</h1>
+  <p class="hint">Every saved health check, newest first. Update status and notes as the bird recovers. Saved on this device.</p>
+  <div id="logList"></div>
+  <div class="row-btns">
+    <button class="btn ghost" id="exportBtn" type="button">Export backup</button>
+    <label class="btn ghost">Import backup<input type="file" id="importFile" accept="application/json" hidden></label>
+  </div>
+</section>
+
+<!-- DISEASES -->
+<section class="tab" id="tab-diseases">
+  <h1 class="ttl">Disease Guide</h1>
+  <div class="filters">
+    <input id="dSearch" placeholder="Search a disease or sign…" aria-label="Search diseases">
+    <select id="dFilter" aria-label="Filter"><option value="">All</option><option value="reportable">Reportable</option><option value="emergency">Emergencies</option><option value="contagious">Contagious</option></select>
+  </div>
+  <div id="dList" class="dlist"></div>
+</section>
+
+<!-- HELP -->
+<section class="tab" id="tab-help">
+  <h1 class="ttl">When to Call for Help</h1>
+  <div class="card urgent-card">
+    <h2>🚨 Call now — vet, state veterinarian or USDA <a href="tel:18665367593">1-866-536-7593</a></h2>
+    <ul class="plain">
+      <li>Several birds sick or dying within a day or two</li>
+      <li>Purple, swollen combs and wattles</li>
+      <li>Twisted necks, tremors or paralysis with breathing trouble</li>
+      <li>Sudden crash in laying with coughing or gasping</li>
+    </ul>
+    <p class="small">Bird flu and virulent Newcastle disease must be reported. Don’t move birds, eggs or equipment off the property until you’ve spoken to someone.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>📞 Call a vet today</h2><ul class="plain"><li>Egg binding or prolapse</li><li>Open-mouth breathing at rest</li><li>Bloody droppings in chicks</li><li>Bird can’t stand or won’t drink</li><li>Heat stress that doesn’t improve in shade</li></ul></div>
+    <div class="card"><h2>👀 Watch and care</h2><ul class="plain"><li>Mild sneeze in one bird, still eating</li><li>Feather loss in fall (molt)</li><li>Small foot scab without swelling</li><li>Mites or lice (treat flock and coop)</li></ul></div>
+    <div class="card"><h2>🛡️ Biosecurity basics</h2><ul class="plain"><li>Quarantine new or show birds 30 days</li><li>Dedicated coop boots and clothes</li><li>Keep wild birds away from feed and water</li><li>Buy from NPIP-tested flocks</li></ul></div>
+    <div class="card"><h2>ℹ️ About this app</h2><ul class="plain"><li>Educational guidance, not a diagnosis</li><li>No medication doses — your vet decides treatment and withdrawal times</li><li>Photos are sent to Claude for the AI check; results are saved only on this device</li></ul></div>
+  </div>
+</section>
+</main>
+
+<script src="kb.js"></script>
+<script src="ai.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

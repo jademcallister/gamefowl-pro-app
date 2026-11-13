@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gamefowl Pro AI Agents</title>
+<meta name="description" content="A team of AI agents for backyard chickens and gamefowl: health, coop, hatching, feed, eggs, conformation, breeding, shows, records, and business helpers." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">🤖</span><div><b>Gamefowl Pro</b><small>AI Agent Team</small></div></div>
+  <div class="prefs">
+    <label>Flock<select id="mode"><option value="both">Both</option><option value="backyard">Backyard</option><option value="gamefowl">Gamefowl</option></select></label>
+    <label>Language<select id="lang"><option>English</option><option>Español</option><option>Tagalog</option></select></label>
+  </div>
+</header>
+
+<div class="app" id="app">
+  <aside class="roster" id="roster" aria-label="Choose an agent"></aside>
+
+  <section class="chatpane" id="chatpane" aria-live="polite">
+    <div class="chead">
+      <button type="button" class="back" id="back" aria-label="Back to agents">‹</button>
+      <span class="cicon" id="cicon"></span>
+      <div class="ctitle"><b id="cname"></b><small id="ctag"></small></div>
+      <div class="cacts">
+        <button type="button" id="exportChat" title="Download this chat">⬇</button>
+        <button type="button" id="clearChat" title="Clear this chat">🗑</button>
+      </div>
+    </div>
+    <div class="msgs" id="msgs"></div>
+    <div class="composer">
+      <div class="attached" id="attached"></div>
+      <div class="crow">
+        <label class="clip" id="clip" title="Attach photos">📷<input type="file" id="files" accept="image/*" multiple></label>
+        <textarea id="box" rows="1" placeholder="Ask anything…"></textarea>
+        <button type="button" class="send" id="send">Send</button>
+      </div>
+      <p class="status" id="status"></p>
+    </div>
+  </section>
+</div>
+
+<script src="roster.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
