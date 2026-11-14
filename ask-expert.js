@@ -102,8 +102,12 @@
   async function sendKeyMode(params, handlers) {
     const key = store.get("expert.key");
     if (!key) throw new Error("Add your Anthropic API key in Settings first.");
-    const Anthropic = window.AnthropicSDK && window.AnthropicSDK.default;
-    if (!Anthropic) throw new Error("The Claude SDK didn't load.");
+    let Anthropic = window.AnthropicSDK && window.AnthropicSDK.default;
+    if (!Anthropic) {
+      // Hosted site: load the same pinned SDK version from the CDN.
+      try { Anthropic = (await import("https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.3.0/+esm")).default; } catch (e) {}
+    }
+    if (!Anthropic) throw new Error("The Claude SDK didn't load. Check your connection and try again.");
     const client = new Anthropic({ apiKey: key, dangerouslyAllowBrowser: true });
     try {
       return await ExpertCore.runTurn(client, params, handlers);
