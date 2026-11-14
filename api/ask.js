@@ -5,7 +5,7 @@
 const Anthropic = require("@anthropic-ai/sdk").default;
 const core = require("../expert-core.js");
 const { HEALTH_CONDITIONS } = require("../health-data.js");
-const { healthRefLinks } = require("../health-refs.js");
+const { healthRefLinks, HEALTH_SOURCES } = require("../health-refs.js");
 
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY
 
@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
   res.on("close", () => { if (!res.writableEnded) controller.abort(); });
 
   try {
-    const params = core.buildParams({ history, conditions: HEALTH_CONDITIONS, refLinks: healthRefLinks });
+    const params = core.buildParams({ history, conditions: HEALTH_CONDITIONS, refLinks: healthRefLinks, sources: HEALTH_SOURCES });
     const result = await core.runTurn(client, params, {
       signal: controller.signal,
       onText: (d) => send({ t: "text", d }),

@@ -132,7 +132,7 @@
   function refsHtml(id) {
     const links = typeof healthRefLinks === "function" ? healthRefLinks(id) : [];
     if (!links.length) return "";
-    const icon = { merck: "📘", forum: "💬", images: "🖼️" };
+    const icon = { merck: "📘", forum: "💬", pdvm: "🩺", extension: "🎓", images: "🖼️" };
     return `<h4>References &amp; real cases</h4><ul class="refs">${links.map((l) =>
       `<li>${icon[l.kind] || "🔗"} <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a></li>`).join("")}</ul>
       <button type="button" class="ghost sm" data-ask="${esc(id)}">Ask the expert about this</button>`;

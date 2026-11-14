@@ -212,3 +212,7 @@ nav { flex-wrap: wrap; }
 }
 
 [hidden] { display: none !important; }
+
+#xLibrary summary { cursor: pointer; font-weight: bold; }
+#xLibrary h4 { margin: 14px 0 4px; color: var(--h-cyan); }
+#expert .refs a { color: var(--h-cyan); }

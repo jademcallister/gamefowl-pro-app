@@ -214,7 +214,7 @@
 
       const history = [...chat.history, ...turn];
       const result = mode === "key"
-        ? await sendKeyMode(ExpertCore.buildParams({ history, conditions: HEALTH_CONDITIONS, refLinks: healthRefLinks }), handlers)
+        ? await sendKeyMode(ExpertCore.buildParams({ history, conditions: HEALTH_CONDITIONS, refLinks: healthRefLinks, sources: HEALTH_SOURCES }), handlers)
         : await sendServerMode(history, handlers);
 
       chat.history = [...history, { role: "assistant", content: result.content }];
@@ -284,9 +284,17 @@
     });
   }
 
+  function renderLibrary() {
+    const groups = typeof HEALTH_SOURCES !== "undefined" ? HEALTH_SOURCES : [];
+    const n = typeof HEALTH_CONDITIONS !== "undefined" ? HEALTH_CONDITIONS.length : 0;
+    $("xLibraryList").innerHTML = `<h4>Gamefowl Pro condition library</h4><p class="muted">${n} conditions, each with Merck references, forum cases, extension guides and photos where available. Open them from Health → Symptom Checker.</p>` +
+      groups.map((g) => `<h4>${esc(g.group)}</h4><ul class="refs">${g.items.map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>`).join("") +
+      `<h4>Searched by the expert</h4><p class="muted">${esc(ExpertCore.TRUSTED_DOMAINS.join(", "))}</p>`;
+  }
+
   window.ExpertUI = { open };
   document.addEventListener("DOMContentLoaded", () => {
     if (!$("expert")) return;
-    wire(); loadSettings();
+    wire(); loadSettings(); renderLibrary();
   });
 })();
