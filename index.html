@@ -18,6 +18,7 @@
   <button onclick="showTab('evaluate')">Evaluate</button>
   <button onclick="showTab('decision')">Decision</button>
   <button onclick="showTab('records')">Records</button>
+  <button onclick="showTab('health')">Health</button>
 </nav>
 
 <main>
@@ -43,9 +44,80 @@
   <div id="recordsList"></div>
 </section>
 
+<section id="health" class="tab">
+  <div class="h-hero">
+    <h2>Health Check</h2>
+    <p>Pick a body area, tick what you see, and get the likely causes and what to do.</p>
+    <div class="h-switch">
+      <button type="button" class="on" data-hview="hCheckView">Symptom Checker</button>
+      <button type="button" data-hview="hLogView">Bird Log</button>
+    </div>
+  </div>
+
+  <datalist id="hBandList"></datalist>
+
+  <div id="hCheckView" class="hview">
+    <div class="h-card">
+      <label for="hBand">Bird (Band ID, optional)</label>
+      <input id="hBand" list="hBandList" placeholder="e.g. RR-114" autocomplete="off">
+
+      <h3 class="step"><span>1</span> Select body area</h3>
+      <div id="hAreas" class="areas"></div>
+
+      <h3 class="step"><span>2</span> Pick symptoms</h3>
+      <input id="hSearch" type="search" placeholder="Search all symptoms (e.g. ear, cough, limp)" autocomplete="off">
+      <div id="hSymptoms" class="symptoms"></div>
+
+      <div class="sel-bar">
+        <div id="hSelected" class="pills"></div>
+        <div class="sel-actions">
+          <button type="button" class="ghost" id="hClear">Clear</button>
+          <button type="button" class="primary" id="hCheckBtn" disabled>Pick symptoms to check</button>
+        </div>
+      </div>
+    </div>
+    <div id="hResults" class="h-card" hidden></div>
+  </div>
+
+  <div id="hLogView" class="hview" hidden>
+    <div class="h-card">
+      <label for="hLogBand">Bird (Band ID)</label>
+      <input id="hLogBand" list="hBandList" placeholder="e.g. RR-114" autocomplete="off">
+
+      <div class="log-forms">
+        <fieldset>
+          <legend>Add photos</legend>
+          <input id="hPhotoFile" type="file" accept="image/*" multiple>
+          <input id="hPhotoDate" type="date">
+          <input id="hPhotoNote" placeholder="Note (e.g. right ear, day 3 after flush)">
+          <button type="button" class="primary" id="hPhotoAdd">Save photos</button>
+        </fieldset>
+        <fieldset>
+          <legend>Add treatment</legend>
+          <input id="hTxDrug" placeholder="What you gave (e.g. chlorhexidine flush)">
+          <input id="hTxDose" placeholder="Dose / amount">
+          <select id="hTxRoute">
+            <option>Topical</option><option>Ear flush</option><option>In water</option><option>Oral</option><option>Injection</option><option>Feed</option>
+          </select>
+          <div class="row2">
+            <label>Start<input id="hTxStart" type="date"></label>
+            <label>Days<input id="hTxDays" type="number" min="1" placeholder="5"></label>
+            <label>Withdrawal days<input id="hTxWd" type="number" min="0" placeholder="0"></label>
+          </div>
+          <input id="hTxReason" placeholder="Reason (e.g. ear abscess)">
+          <button type="button" class="primary" id="hTxAdd">Save treatment</button>
+        </fieldset>
+      </div>
+    </div>
+    <div id="hLog" class="h-card"></div>
+  </div>
+</section>
+
 </main>
 
 <script src="app.js"></script>
+<script src="health-data.js"></script>
+<script src="health.js"></script>
 
 </body>
 </html>
