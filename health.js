@@ -124,7 +124,7 @@
     if (!imgs.length) return "";
     return `<h4>Photos</h4><div class="cond-imgs">${imgs.map((im) => `
       <figure>
-        <a href="${esc(im.src)}" target="_blank" rel="noopener"><img src="${esc(im.src)}" alt="${esc(im.caption)}" loading="lazy"></a>
+        <a href="${esc(im.remote || im.src)}" target="_blank" rel="noopener"><img src="${esc(im.src)}" alt="${esc(im.caption)}" loading="lazy"${im.remote ? ` onerror="this.onerror=null;this.src='${esc(im.remote)}'"` : ""}></a>
         <figcaption>${esc(im.caption)}<br><span class="credit">Photo: <a href="${esc(im.sourceUrl)}" target="_blank" rel="noopener">${esc(im.credit || "Wikimedia Commons")}</a>, <a href="${esc(im.licenseUrl || im.sourceUrl)}" target="_blank" rel="noopener">${esc(im.license)}</a></span></figcaption>
       </figure>`).join("")}</div>`;
   }
