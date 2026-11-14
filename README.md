@@ -37,3 +37,8 @@ The key stays in that browser only and is sent only to Anthropic. Use this on yo
 - `ask-expert.js`: chat UI
 - `api/ask.js`: optional Vercel function
 - `vendor/anthropic-sdk-1.3.0.js`: Anthropic JS SDK bundled for the browser
+
+## Live site
+https://chickenhealth.hotcockergamefowl.com (Vercel project `chickenhealth`).
+
+The Vercel project holds only `index.html` and `deploy/vercel.json` (deployed as `vercel.json`). Every other file is served from this public repo through jsDelivr, pinned to a commit. To publish an update: push, put the new commit SHA in `deploy/vercel.json`, and redeploy those two files. Server mode (`api/ask.js`) is not deployed this way; "My API key" mode and "Ask in Claude app" work.

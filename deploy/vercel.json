@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "https://cdn.jsdelivr.net/gh/jademcallister/gamefowl-pro-app@b7f608463c917a4ee88397ed303b218ede5c5289/$1" }
+  ]
+}
