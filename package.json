@@ -1,0 +1,8 @@
+{
+  "name": "gamefowl-pro-app",
+  "private": true,
+  "description": "Gamefowl Pro breeder app. Static site; api/ask.js is an optional Vercel function for Ask an Expert.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.3.0"
+  }
+}

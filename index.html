@@ -19,6 +19,7 @@
   <button onclick="showTab('decision')">Decision</button>
   <button onclick="showTab('records')">Records</button>
   <button onclick="showTab('health')">Health</button>
+  <button onclick="showTab('expert')">Ask an Expert</button>
 </nav>
 
 <main>
@@ -113,11 +114,82 @@
   </div>
 </section>
 
+<section id="expert" class="tab">
+  <div class="h-hero">
+    <h2>Ask an Expert</h2>
+    <p>Poultry and vet knowledge, backed by the app's condition library, Merck Vet Manual and other trusted sites, plus your bird's own log and photos.</p>
+  </div>
+
+  <div class="h-card">
+    <details id="xSettings">
+      <summary>⚙ Settings</summary>
+      <label for="xMode">Connect to Claude using</label>
+      <select id="xMode">
+        <option value="key">My API key (saved on this device)</option>
+        <option value="server">My server (Vercel)</option>
+      </select>
+      <div id="xKeyRow">
+        <label for="xKey">Anthropic API key</label>
+        <input id="xKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+        <p class="muted">Get one at console.anthropic.com → API Keys. It's stored only in this browser and sent only to Anthropic. Usage is billed to that account.</p>
+      </div>
+      <div id="xServerRow" hidden>
+        <label for="xServer">Server address</label>
+        <input id="xServer" placeholder="/api/ask">
+        <label for="xPass">Passcode</label>
+        <input id="xPass" type="password" autocomplete="off">
+      </div>
+      <button type="button" class="primary" id="xSave">Save settings</button> <span id="xSettingsMsg" class="muted"></span>
+    </details>
+    <p id="xSetupHint" class="alert" hidden>Open <strong>⚙ Settings</strong> and add your API key (or server) to start.</p>
+
+    <div class="x-bird">
+      <div>
+        <label for="xBand">Bird (Band ID, optional)</label>
+        <input id="xBand" list="hBandList" placeholder="e.g. RR-114" autocomplete="off">
+      </div>
+      <label class="x-check"><input type="checkbox" id="xUseLog" checked> Include this bird's log and last 3 photos</label>
+    </div>
+  </div>
+
+  <div class="h-card x-chat-card">
+    <div class="x-chat-head"><h3>Conversation</h3><button type="button" class="ghost sm" id="xNew">New chat</button></div>
+    <div id="xEmpty" class="x-empty">
+      <p class="muted">Try one of these, or ask anything about your birds:</p>
+      <div id="xSuggest" class="x-suggest">
+        <button type="button">His ear keeps filling up with cheesy pus after I clean it. What should I do next?</button>
+        <button type="button">What vaccines should my breeding flock have, and when?</button>
+        <button type="button">How do I tell fowl pox scabs from a healed peck wound?</button>
+        <button type="button">What's a good quarantine plan for a new brood cock?</button>
+      </div>
+    </div>
+    <div id="xChat" class="x-chat" aria-live="polite"></div>
+
+    <div class="x-composer">
+      <div id="xAttach" class="x-attach"></div>
+      <textarea id="xInput" rows="3" placeholder="Describe what you're seeing, or ask a question…"></textarea>
+      <div class="x-actions">
+        <input id="xPhoto" type="file" accept="image/*" multiple hidden>
+        <button type="button" class="ghost" id="xPhotoBtn">📷 Add photos</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" id="xStop" hidden>Stop</button>
+        <button type="button" class="primary" id="xSend">Ask</button>
+      </div>
+    </div>
+    <p class="disclaimer">AI guidance, not a vet exam. For breathing trouble, nerve signs or several sick birds, call a vet. Suspected bird flu or Newcastle: USDA 1-866-536-7593.</p>
+  </div>
+</section>
+
 </main>
 
 <script src="app.js"></script>
 <script src="health-data.js"></script>
+<script src="health-refs.js"></script>
+<script src="health-images.js" onerror="window.HEALTH_IMAGES = {}"></script>
 <script src="health.js"></script>
+<script src="vendor/anthropic-sdk-1.3.0.js"></script>
+<script src="expert-core.js"></script>
+<script src="ask-expert.js"></script>
 
 </body>
 </html>

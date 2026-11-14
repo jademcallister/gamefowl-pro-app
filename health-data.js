@@ -290,3 +290,5 @@ const HEALTH_CONDITIONS = [
     vet: "Collapse or no improvement within an hour.",
   },
 ];
+
+if (typeof module !== "undefined") module.exports = { HEALTH_AREAS, HEALTH_SYMPTOMS, HEALTH_CONDITIONS };

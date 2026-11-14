@@ -113,8 +113,29 @@
           <h4>What to look for</h4><p>${esc(c.check)}</p>
           <h4>What to do</h4><ol>${c.care.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
           <h4>Call a vet if</h4><p>${esc(c.vet)}</p>
+          ${imagesHtml(c.id)}
+          ${refsHtml(c.id)}
         </div>
       </article>`;
+  }
+
+  function imagesHtml(id) {
+    const imgs = (typeof HEALTH_IMAGES !== "undefined" && HEALTH_IMAGES[id]) || [];
+    if (!imgs.length) return "";
+    return `<h4>Photos</h4><div class="cond-imgs">${imgs.map((im) => `
+      <figure>
+        <a href="${esc(im.src)}" target="_blank" rel="noopener"><img src="${esc(im.src)}" alt="${esc(im.caption)}" loading="lazy"></a>
+        <figcaption>${esc(im.caption)}<br><span class="credit">Photo: <a href="${esc(im.sourceUrl)}" target="_blank" rel="noopener">${esc(im.credit || "Wikimedia Commons")}</a>, <a href="${esc(im.licenseUrl || im.sourceUrl)}" target="_blank" rel="noopener">${esc(im.license)}</a></span></figcaption>
+      </figure>`).join("")}</div>`;
+  }
+
+  function refsHtml(id) {
+    const links = typeof healthRefLinks === "function" ? healthRefLinks(id) : [];
+    if (!links.length) return "";
+    const icon = { merck: "📘", forum: "💬", images: "🖼️" };
+    return `<h4>References &amp; real cases</h4><ul class="refs">${links.map((l) =>
+      `<li>${icon[l.kind] || "🔗"} <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a></li>`).join("")}</ul>
+      <button type="button" class="ghost sm" data-ask="${esc(id)}">Ask the expert about this</button>`;
   }
 
   function runCheck() {
@@ -245,6 +266,8 @@
       } else if (e.type === "check") {
         body = `<p><strong>Symptom check:</strong> ${e.data.symptoms.map((id) => esc(symptomById[id]?.name || id)).join(", ")}</p>
           <p class="muted">Top matches: ${e.data.top.map((t) => `${esc(t.name)} (${t.pct}%)`).join(" · ") || "none"}</p>`;
+      } else if (e.type === "expert") {
+        body = `<p><strong>Asked the expert:</strong> ${esc(e.data.question)}</p><div class="tl-answer">${esc(e.data.answer).replace(/\n/g, "<br>")}</div>`;
       } else if (e.type === "treatment") {
         body = `<p><strong>Started:</strong> ${esc(e.data.drug)} for ${e.data.days} day${e.data.days > 1 ? "s" : ""}</p>`;
       }
@@ -273,6 +296,15 @@
     $("hCheckBtn").addEventListener("click", runCheck);
     $("hResults").addEventListener("click", (ev) => {
       const h = ev.target.closest("[data-toggle]"); if (h) h.parentElement.classList.toggle("open");
+      const ask = ev.target.closest("[data-ask]");
+      if (ask && window.ExpertUI) {
+        const c = HEALTH_CONDITIONS.find((x) => x.id === ask.dataset.ask);
+        const seen = [...state.selected].map((id) => symptomById[id].name).join(", ");
+        window.ExpertUI.open({
+          band: $("hBand").value.trim(),
+          question: `The symptom checker suggested "${c.name}". What I'm seeing: ${seen}. How do I confirm it, and what should I do next?`,
+        });
+      }
     });
 
     document.querySelectorAll("[data-hview]").forEach((b) => b.addEventListener("click", () => {
@@ -301,6 +333,9 @@
     $("hPhotoDate").value = today();
     $("hTxStart").value = today();
   }
+
+  // Shared with the Ask an Expert tab.
+  window.HealthDB = { allEntries, addEntry, resizeImage, refreshBandList, renderLog, symptomById };
 
   document.addEventListener("DOMContentLoaded", () => {
     if (!$("health")) return;
