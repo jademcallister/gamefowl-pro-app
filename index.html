@@ -141,7 +141,7 @@
       </div>
       <button type="button" class="primary" id="xSave">Save settings</button> <span id="xSettingsMsg" class="muted"></span>
     </details>
-    <p id="xSetupHint" class="alert" hidden>Open <strong>⚙ Settings</strong> and add your API key (or server) to start.</p>
+    <p id="xSetupHint" class="alert" hidden>No API key yet? Use <strong>Ask in Claude app</strong> below. It sends your question and the bird's details to your Claude app. To chat right here instead, add a key in <strong>⚙ Settings</strong>.</p>
 
     <div class="x-bird">
       <div>
@@ -181,8 +181,10 @@
         <button type="button" class="ghost" id="xPhotoBtn">📷 Add photos</button>
         <span class="spacer"></span>
         <button type="button" class="ghost" id="xStop" hidden>Stop</button>
+        <button type="button" class="ghost" id="xInClaude" title="No API key needed: opens your Claude app with this question and the bird's details">Ask in Claude app</button>
         <button type="button" class="primary" id="xSend">Ask</button>
       </div>
+      <p id="xClaudeMsg" class="muted"></p>
     </div>
     <p class="disclaimer">AI guidance, not a vet exam. For breathing trouble, nerve signs or several sick birds, call a vet. Suspected bird flu or Newcastle: USDA 1-866-536-7593.</p>
   </div>

@@ -252,7 +252,44 @@
     $("xEmpty").hidden = false;
   }
 
-  function open({ band, question } = {}) {
+  // No-key option: package the question with the bird's log and matching condition notes,
+  // copy it, and open Claude (the keeper's own Claude subscription).
+  async function askInClaude() {
+    const question = $("xInput").value.trim();
+    if (!question) { $("xInput").focus(); return; }
+    const band = $("xBand").value.trim();
+    const parts = [
+      "I keep gamefowl for breeding and need poultry health advice. Please act as an experienced poultry vet adviser: give the most likely causes ranked, what to do today, red flags that need a vet, and drug classes with a reminder to confirm doses and withdrawal times with a vet. Search Merck Veterinary Manual, university extension sites and USDA where helpful, and end with a Sources list with links.",
+      "",
+      "My question: " + question,
+    ];
+    let conditionIds = new Set(chat.focus ? [chat.focus] : []);
+    if (band && $("xUseLog").checked) {
+      const rec = await birdRecord(band);
+      parts.push("", rec.text);
+      const checks = (await HealthDB.allEntries()).filter((e) => e.band === band && e.type === "check");
+      const last = checks.sort((a, b) => b.created - a.created)[0];
+      if (last) last.data.top.slice(0, 2).forEach((t) => conditionIds.add(t.id));
+      if (rec.photos.length) parts.push(`(I have ${rec.photos.length} photo(s) of this bird and will attach them.)`);
+    }
+    const notes = [...conditionIds].map((id) => HEALTH_CONDITIONS.find((c) => c.id === id)).filter(Boolean).map((c) => {
+      const refs = healthRefLinks(c.id).filter((l) => l.kind === "merck").map((l) => l.url).join(" ");
+      return `- ${c.name}: ${c.about} Signs: ${c.check} Vet if: ${c.vet}${refs ? " Ref: " + refs : ""}`;
+    });
+    if (notes.length) parts.push("", "My app's notes on the likely conditions:", ...notes);
+    const text = parts.join("\n");
+    let copied = false;
+    try { await navigator.clipboard.writeText(text); copied = true; } catch (e) {}
+    const url = "https://claude.ai/new?q=" + encodeURIComponent(text);
+    $("xClaudeMsg").innerHTML = (copied ? "Copied. " : "") + (url.length < 7000
+      ? `Claude is opening with your question filled in${copied ? " (if not, paste it)" : ""}. Attach your photos there.`
+      : "Your question is long, so paste it into a new Claude chat and attach your photos.");
+    if (url.length < 7000) window.open(url, "_blank", "noopener");
+    else window.open("https://claude.ai/new", "_blank", "noopener");
+  }
+
+  function open({ band, question, focus } = {}) {
+    chat.focus = focus || null;
     if (typeof showTab === "function") showTab("expert");
     if (band) $("xBand").value = band;
     if (question) $("xInput").value = question;
@@ -263,6 +300,7 @@
     $("xMode").addEventListener("change", syncMode);
     $("xSave").addEventListener("click", saveSettings);
     $("xSend").addEventListener("click", ask);
+    $("xInClaude").addEventListener("click", askInClaude);
     $("xStop").addEventListener("click", () => chat.abort && chat.abort.abort());
     $("xNew").addEventListener("click", newChat);
     $("xInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(); } });

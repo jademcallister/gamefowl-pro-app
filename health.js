@@ -301,6 +301,7 @@
         const c = HEALTH_CONDITIONS.find((x) => x.id === ask.dataset.ask);
         const seen = [...state.selected].map((id) => symptomById[id].name).join(", ");
         window.ExpertUI.open({
+          focus: c.id,
           band: $("hBand").value.trim(),
           question: `The symptom checker suggested "${c.name}". What I'm seeing: ${seen}. How do I confirm it, and what should I do next?`,
         });
