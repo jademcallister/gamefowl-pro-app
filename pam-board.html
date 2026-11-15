@@ -1,0 +1,433 @@
+<title>PAM Command Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: desert-dusk masthead, then a two-column board of navy panels (one column on phones). Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --night: #07122a;      /* page */
+  --panel: #0e1d3d;      /* panels */
+  --panel-2: #132652;    /* raised rows */
+  --line: #24407a;       /* panel edges */
+  --ink: #eef2fa;        /* text */
+  --ink-2: #b9c6e0;      /* secondary text */
+  --ink-3: #8fa1c6;      /* muted */
+  --gold: #e3b54a;       /* accent */
+  --gold-ink: #1a1203;
+  --ok: #4cc36a;
+  --warn: #f0a531;
+  --bad: #ef5a4c;
+  --violet: #b182ec;
+  --sky: #5aa9e6;
+  --f-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--night); color: var(--ink); }
+body { font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Masthead */
+.mast { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #050d22 0%, #15295a 45%, #4b3270 72%, #b8553a 92%, #e2944a 100%); }
+.mast svg.scene { position: absolute; inset: auto 0 0 0; width: 100%; height: 70%; display: block; }
+.mast .wrap { position: relative; padding-block: 28px 26px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+.brand h1 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(40px, 8vw, 64px); letter-spacing: .04em; line-height: 1; color: var(--gold); text-shadow: 0 2px 0 #6b4a0e, 0 6px 18px rgba(0,0,0,.55); }
+.brand p { margin: 6px 0 0; font-family: var(--f-display); font-size: 13px; letter-spacing: .32em; text-transform: uppercase; color: #f4ead2; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+.today { font-family: var(--f-mono); font-size: 13px; color: #f4ead2; background: rgba(7,18,42,.6); border: 1px solid rgba(227,181,74,.5); border-radius: 6px; padding: 6px 10px; }
+
+/* Summary strip */
+.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-block: 18px 6px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.stat b { display: block; font-family: var(--f-mono); font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.stat.bad b { color: var(--bad); } .stat.gold b { color: var(--gold); } .stat.ok b { color: var(--ok); }
+@media (max-width: 560px) { .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Owner filter + add form */
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-block: 14px; }
+.chip { border: 1px solid var(--line); background: var(--panel); color: var(--ink-2); border-radius: 999px; padding: 5px 14px; cursor: pointer; font-size: 13px; }
+.chip[aria-pressed="true"] { background: var(--gold); color: var(--gold-ink); border-color: var(--gold); font-weight: 600; }
+.bar .grow { flex: 1 1 auto; }
+
+.add { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr) auto; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.add input, .add select { width: 100%; background: var(--night); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+.add input::placeholder { color: var(--ink-3); }
+@media (max-width: 860px) { .add { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } .add #t-title { grid-column: 1 / -1; } }
+.btn { border: 1px solid var(--gold); background: var(--gold); color: var(--gold-ink); font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; white-space: nowrap; }
+.btn.ghost { background: transparent; color: var(--gold); }
+.btn:disabled { opacity: .5; cursor: default; }
+
+/* Board */
+.board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-block: 14px 32px; }
+@media (max-width: 820px) { .board { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; min-width: 0; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+.panel h2 { margin: 0 0 10px; display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; text-wrap: balance; }
+.panel h2 .ico { width: 28px; height: 28px; flex: none; }
+.panel h2 .n { margin-left: auto; font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); }
+.panel .sub { margin: -6px 0 10px 38px; font-size: 12px; color: var(--ink-3); }
+
+ul.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.task { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: start; background: var(--panel-2); border-radius: 8px; padding: 8px 10px; border-left: 3px solid transparent; }
+.task.over { border-left-color: var(--bad); }
+.task.soon { border-left-color: var(--warn); }
+.task input[type=checkbox] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); cursor: pointer; }
+.task .t { min-width: 0; overflow-wrap: anywhere; }
+.task .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 2px; font-size: 12px; color: var(--ink-3); }
+.pill { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; border-radius: 4px; padding: 1px 6px; font-weight: 600; }
+.pill.over { background: rgba(239,90,76,.18); color: #ff8f84; }
+.pill.soon { background: rgba(240,165,49,.18); color: #ffc46e; }
+.pill.who { background: rgba(90,169,230,.16); color: #9ccdf3; }
+.del { background: none; border: 0; color: var(--ink-3); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px; }
+.del:hover { color: var(--bad); }
+.empty { color: var(--ink-3); font-size: 13px; padding: 6px 2px; }
+
+/* Calendar */
+ol.cal { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+ol.cal li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; background: var(--panel-2); border-radius: 8px; padding: 7px 10px; }
+ol.cal .when { font-family: var(--f-mono); font-size: 12px; color: var(--gold); line-height: 1.35; }
+ol.cal a { color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+ol.cal a:hover { text-decoration: underline; }
+.fresh { font-size: 11px; color: var(--ink-3); margin-top: 8px; }
+
+/* Links + reports */
+.links { display: grid; gap: 8px; }
+.links a { display: flex; align-items: center; gap: 10px; background: var(--panel-2); border-radius: 8px; padding: 9px 12px; color: var(--ink); text-decoration: none; }
+.links a:hover { outline: 1px solid var(--gold); }
+.links small { color: var(--ink-3); margin-left: auto; font-size: 12px; }
+.reports { display: flex; flex-wrap: wrap; gap: 8px; }
+.out { margin-top: 12px; background: var(--night); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; max-height: 460px; overflow: auto; }
+.out-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 12px; color: var(--ink-3); }
+.notice { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
+.notice.err { color: #ff8f84; }
+@media (prefers-reduced-motion: no-preference) { .task { transition: background .15s; } }
+</style>
+
+<header class="mast">
+  <svg class="scene" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path fill="#3b3e6d" opacity=".85" d="M0 150 L140 90 L210 120 L300 70 L370 110 L470 95 L590 130 L700 92 L800 118 L900 76 L990 108 L1100 84 L1200 120 V260 H0Z"/>
+    <path fill="#e9ecf6" opacity=".5" d="M300 70 L282 84 L296 85 L310 77 L322 88Z M900 76 L882 90 L896 89 L911 82 L923 93Z"/>
+    <path fill="#9c3e29" d="M0 150 L30 150 L38 118 L170 118 L180 150 L215 158 L222 196 L270 200 L280 236 L420 244 V260 H0Z"/>
+    <path fill="#9c3e29" d="M1200 140 L1170 140 L1162 112 L1040 112 L1030 148 L990 156 L982 194 L935 200 L922 238 L790 246 V260 H1200Z"/>
+    <path fill="#40170f" d="M0 248 H1200 V260 H0Z"/>
+    <g fill="#120a0a">
+      <path d="M1060 248 h58 v-28 l-29 -20 l-29 20Z"/>
+      <path d="M120 248 c8-14 24-18 42-16 l6-11 c3-2 6 0 6 3 l-3 10 c3 5 2 10-3 11 l-2 3 v-0 h-4 l-1 0 h-28 l-3 0 h-5 l0 0 c-5 0-8 0-11 0Z"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="brand">
+      <h1>PAM</h1>
+      <p>McAllister Insurance</p>
+    </div>
+    <div class="today" id="today"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="strip" aria-label="Summary">
+    <div class="stat bad"><b id="s-over">0</b><span>Overdue</span></div>
+    <div class="stat gold"><b id="s-today">0</b><span>Due in 7 days</span></div>
+    <div class="stat"><b id="s-open">0</b><span>Open tasks</span></div>
+    <div class="stat ok"><b id="s-rev">0</b><span>Revenue calls</span></div>
+  </section>
+
+  <div class="bar" role="group" aria-label="Show tasks for">
+    <button class="chip" data-owner="" aria-pressed="true">Everyone</button>
+    <button class="chip" data-owner="Jade" aria-pressed="false">Jade</button>
+    <button class="chip" data-owner="Jodi" aria-pressed="false">Jodi</button>
+    <button class="chip" data-owner="Judy" aria-pressed="false">Judy</button>
+    <span class="grow"></span>
+    <button class="btn ghost" id="clear-done" hidden>Clear finished</button>
+  </div>
+
+  <form class="add" id="add" autocomplete="off">
+    <input id="t-title" placeholder="New task, e.g. Call Smith about home renewal" aria-label="Task" required>
+    <input id="t-client" placeholder="Client" aria-label="Client">
+    <select id="t-owner" aria-label="Who">
+      <option value="">Who</option><option>Jade</option><option>Jodi</option><option>Judy</option>
+    </select>
+    <input id="t-due" type="date" aria-label="Due date">
+    <select id="t-section" aria-label="List">
+      <option value="priority">Priority</option>
+      <option value="attention">Needs attention</option>
+      <option value="revenue">Revenue</option>
+    </select>
+    <button class="btn" id="t-add" type="submit">Add</button>
+  </form>
+  <p class="notice" id="db-note">Loading your tasks…</p>
+
+  <div class="board">
+    <section class="panel" aria-labelledby="h-pri">
+      <h2 id="h-pri"><svg class="ico" viewBox="0 0 24 24"><path fill="#e3b54a" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z"/></svg>Today's Priorities<span class="n" id="n-priority"></span></h2>
+      <p class="sub">Tasks · Renewals · Quotes · Follow-ups</p>
+      <ul class="tasks" id="l-priority"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="h-att">
+      <h2 id="h-att"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ef5a4c"/><rect x="10.8" y="5.5" width="2.4" height="8.5" rx="1.2" fill="#fff"/><circle cx="12" cy="17.3" r="1.5" fill="#fff"/></svg>Needs Attention<span class="n" id="n-attention"></span></h2>
+      <p class="sub">Overdue · At risk · Missing information</p>
+      <ul class="tasks" id="l-attention"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="h-rev">
+      <h2 id="h-rev"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="13" width="4.5" height="8" rx="1" fill="#4cc36a"/><rect x="9.75" y="8.5" width="4.5" height="12.5" rx="1" fill="#4cc36a"/><rect x="16.5" y="3" width="4.5" height="18" rx="1" fill="#4cc36a"/></svg>Revenue Opportunities<span class="n" id="n-revenue"></span></h2>
+      <p class="sub">Win-backs · Cross-sell · Referrals · New business</p>
+      <ul class="tasks" id="l-revenue"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="h-cal">
+      <h2 id="h-cal"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="#5aa9e6"/><rect x="3" y="5" width="18" height="5" rx="2.5" fill="#2f6fae"/><rect x="7" y="2.5" width="2" height="5" rx="1" fill="#eef2fa"/><rect x="15" y="2.5" width="2" height="5" rx="1" fill="#eef2fa"/></svg>Calendar<span class="n">next 7 days</span></h2>
+      <ol class="cal" id="cal"><li><span class="when">…</span><span class="empty">Connect Google Calendar to see your week here.</span></li></ol>
+      <div class="out-bar"><button class="btn ghost" id="cal-connect" type="button">Connect Google Calendar</button><span id="cal-fresh"></span></div>
+    </section>
+
+    <section class="panel" aria-labelledby="h-ai">
+      <h2 id="h-ai"><svg class="ico" viewBox="0 0 24 24"><path fill="#b182ec" d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2.6 4.5A3.5 3.5 0 0 0 5 17a3 3 0 0 0 4 3.8V3.2A3 3 0 0 0 9 3zm6 0a3 3 0 0 1 3 3 3 3 0 0 1 2.6 4.5A3.5 3.5 0 0 1 19 17a3 3 0 0 1-4 3.8V3.2A3 3 0 0 1 15 3z"/></svg>AI Team · Reports</h2>
+      <p class="sub">Claude writes these from the tasks and calendar on this board.</p>
+      <div class="reports">
+        <button class="btn ghost" data-report="daily" type="button">Daily lists</button>
+        <button class="btn ghost" data-report="attention" type="button">What needs me</button>
+        <button class="btn ghost" data-report="friday" type="button">Friday summary</button>
+        <button class="btn ghost" data-report="revenue" type="button">Revenue plan</button>
+      </div>
+      <div class="out" id="out" hidden></div>
+      <div class="out-bar" id="out-bar" hidden><button class="btn ghost" id="copy" type="button">Copy for Jarvis</button><span id="out-note"></span></div>
+      <p class="notice" id="ai-note"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="h-src">
+      <h2 id="h-src"><svg class="ico" viewBox="0 0 24 24"><path fill="none" stroke="#4cc36a" stroke-width="2.6" stroke-linecap="round" d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></svg>Source Links</h2>
+      <div class="links">
+        <a href="https://worklist.mcallisterins.com" target="_blank" rel="noopener">Client worklist · Jarvis <small>worklist.mcallisterins.com</small></a>
+        <a href="https://calendar.google.com" target="_blank" rel="noopener">Google Calendar <small>calendar.google.com</small></a>
+        <a href="https://mail.google.com" target="_blank" rel="noopener">Gmail <small>mail.google.com</small></a>
+        <a href="https://drive.google.com" target="_blank" rel="noopener">Google Drive <small>drive.google.com</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const todayISO = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+  const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+  const fmtDue = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  $('today').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  let tasks = [];
+  let owner = '';
+  let events = [];
+  let db = null;
+  let col = null;
+
+  function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function keep(key, v) { try { localStorage.setItem(key, v); } catch (e) {} }
+  owner = load('pam-owner') || '';
+
+  // ---------- tasks ----------
+  function status(t) {
+    if (!t.due || t.done) return '';
+    const today = todayISO();
+    if (t.due < today) return 'over';
+    if (t.due <= addDays(today, 3)) return 'soon';
+    return '';
+  }
+  function bucket(t) {
+    if (status(t) === 'over') return 'attention';
+    return t.section === 'attention' || t.section === 'revenue' ? t.section : 'priority';
+  }
+  function visible() { return tasks.filter((t) => !owner || t.owner === owner); }
+
+  function row(t) {
+    const li = document.createElement('li');
+    const st = status(t);
+    li.className = 'task' + (st ? ' ' + st : '');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = !!t.done; cb.id = 'cb-' + t.id;
+    cb.setAttribute('aria-label', 'Done: ' + t.title);
+    cb.addEventListener('change', () => write(() => col.doc(t.id).update({ done: cb.checked })));
+    const body = document.createElement('div');
+    body.className = 't';
+    const title = document.createElement('div');
+    title.textContent = t.title;
+    if (t.done) { title.style.textDecoration = 'line-through'; title.style.color = 'var(--ink-3)'; }
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    if (st === 'over') meta.append(pill('over', 'Overdue'));
+    if (st === 'soon') meta.append(pill('soon', 'Due soon'));
+    if (t.owner) meta.append(pill('who', t.owner));
+    if (t.client) meta.append(text(t.client));
+    if (t.due) meta.append(text('due ' + fmtDue(t.due)));
+    body.append(title, meta);
+    const del = document.createElement('button');
+    del.className = 'del'; del.type = 'button'; del.textContent = '×';
+    del.setAttribute('aria-label', 'Delete: ' + t.title);
+    del.addEventListener('click', () => write(() => col.doc(t.id).delete()));
+    li.append(cb, body, del);
+    return li;
+  }
+  function pill(cls, s) { const e = document.createElement('span'); e.className = 'pill ' + cls; e.textContent = s; return e; }
+  function text(s) { const e = document.createElement('span'); e.textContent = s; return e; }
+
+  function render() {
+    const list = visible();
+    const open = list.filter((t) => !t.done);
+    const today = todayISO(), wk = addDays(today, 7);
+    $('s-over').textContent = open.filter((t) => status(t) === 'over').length;
+    $('s-today').textContent = open.filter((t) => t.due && t.due >= today && t.due <= wk).length;
+    $('s-open').textContent = open.length;
+    $('s-rev').textContent = open.filter((t) => t.section === 'revenue').length;
+    const blank = { priority: 'Nothing on deck. Add a task above.', attention: 'Nothing overdue or at risk.', revenue: 'Add win-backs, cross-sells and referrals here.' };
+    for (const sec of ['priority', 'attention', 'revenue']) {
+      const ul = $('l-' + sec);
+      const items = list.filter((t) => bucket(t) === sec).sort((a, b) => (a.done - b.done) || (a.due || '9999').localeCompare(b.due || '9999'));
+      ul.replaceChildren(...(items.length ? items.map(row) : [Object.assign(document.createElement('li'), { className: 'empty', textContent: blank[sec] })]));
+      $('n-' + sec).textContent = items.filter((t) => !t.done).length + ' open';
+    }
+    $('clear-done').hidden = !list.some((t) => t.done);
+    document.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.owner === owner)));
+  }
+
+  let busy = Promise.resolve();
+  function write(fn) {
+    if (!col) return;
+    busy = busy.then(fn).catch((e) => note('db-note', 'That change was not saved: ' + (e && e.message ? e.message : 'try again.'), true));
+  }
+  function note(id, msg, isErr) { const n = $(id); n.textContent = msg; n.classList.toggle('err', !!isErr); }
+
+  document.querySelectorAll('.chip').forEach((c) => c.addEventListener('click', () => { owner = c.dataset.owner; keep('pam-owner', owner); render(); }));
+  $('clear-done').addEventListener('click', () => { tasks.filter((t) => t.done).forEach((t) => write(() => col.doc(t.id).delete())); });
+
+  $('add').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const title = $('t-title').value.trim();
+    if (!title || !col) return;
+    const doc = { title, section: $('t-section').value, done: false, createdAt: new Date().toISOString() };
+    const client = $('t-client').value.trim(); if (client) doc.client = client;
+    const who = $('t-owner').value; if (who) doc.owner = who;
+    const due = $('t-due').value; if (due) doc.due = due;
+    write(() => col.add(doc));
+    $('t-title').value = ''; $('t-client').value = ''; $('t-due').value = '';
+    $('t-title').focus();
+  });
+
+  render();
+
+  // ---------- db ----------
+  (async () => {
+    const timer = setTimeout(() => note('db-note', 'Your tasks are taking a while to load. They will appear when the connection answers.', true), 10000);
+    db = await (window.claude ? window.claude.use('db') : null);
+    if (!db) {
+      clearTimeout(timer);
+      note('db-note', 'Sign in to claude.ai to see and add tasks. Tasks are saved for everyone on your team who opens this board.', true);
+      $('t-add').disabled = true;
+      return;
+    }
+    col = db.collection('tasks');
+    col.onSnapshot((snap) => {
+      clearTimeout(timer);
+      tasks = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      note('db-note', tasks.length ? '' : 'No tasks yet. Add the first one above, or ask Claude to load your worklist.');
+      render();
+    }, (err) => { clearTimeout(timer); note('db-note', 'Tasks could not load: ' + (err && err.message ? err.message : 'connection failed') + '.', true); });
+  })();
+
+  // ---------- calendar ----------
+  let mcp = null;
+  function renderCal() {
+    const ol = $('cal');
+    if (!events.length) { ol.replaceChildren(Object.assign(document.createElement('li'), { innerHTML: '<span class="when">—</span><span class="empty">No events in the next 7 days.</span>' })); return; }
+    ol.replaceChildren(...events.slice(0, 10).map((ev) => {
+      const li = document.createElement('li');
+      const when = document.createElement('span'); when.className = 'when';
+      const s = ev.start || {};
+      if (s.dateTime) { const d = new Date(s.dateTime); when.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + '\n' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+      else if (s.date) { when.textContent = fmtDue(s.date) + '\nAll day'; }
+      when.style.whiteSpace = 'pre-line';
+      const a = document.createElement(ev.htmlLink ? 'a' : 'span');
+      a.textContent = ev.summary || '(no title)';
+      if (ev.htmlLink) { a.href = ev.htmlLink; a.target = '_blank'; a.rel = 'noopener'; }
+      li.append(when, a);
+      return li;
+    }));
+  }
+  function startCal() {
+    if (!mcp) return;
+    $('cal-connect').hidden = true;
+    mcp.watchTool('Google Calendar', 'list_events', { orderBy: 'startTime', pageSize: 10 }, (e) => {
+      if (e.type === 'data') {
+        const p = e.result && e.result.payload;
+        events = (p && Array.isArray(p.events)) ? p.events : [];
+        renderCal();
+        const at = e.result.cache && e.result.cache.storedAt ? new Date(e.result.cache.storedAt) : new Date();
+        $('cal-fresh').textContent = 'Updated ' + at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      } else {
+        const code = e.error && e.error.code;
+        if (code === 'not_granted' || code === 'server_not_connected') { events = []; $('cal-connect').hidden = false; }
+        $('cal-fresh').textContent = code === 'server_not_connected' ? 'Google Calendar is not connected in your claude.ai settings.' : (code === 'not_granted' ? 'Calendar access was not allowed.' : 'Calendar could not refresh right now.');
+      }
+    }, { cache: { staleTime: 5 * 60000 }, refetchInterval: 10 * 60000 });
+  }
+  (async () => {
+    mcp = await (window.claude ? window.claude.use('mcp') : null);
+    if (!mcp) { $('cal-connect').hidden = true; $('cal-fresh').textContent = 'Calendar is available when you open this board signed in to claude.ai.'; return; }
+    startCal();
+  })();
+  $('cal-connect').addEventListener('click', startCal);
+
+  // ---------- reports ----------
+  let sample = null;
+  (async () => {
+    sample = await (window.claude ? window.claude.use('sample') : null);
+    if (!sample) { document.querySelectorAll('[data-report]').forEach((b) => (b.disabled = true)); note('ai-note', 'Reports are available when you open this board signed in to claude.ai.'); }
+  })();
+
+  const RULES = 'You write for McAllister Insurance, a small agency. Staff: Jade (owner), Jodi and Judy. Equine-only clients are worked by Jodi and Jade, never Judy. Work renewals 30+ days before they are due, with checkpoints at 60, 45 and 30 days; under 30 days is URGENT. Use only the data given; never invent clients, premiums, dates or outcomes, and say in one line when data is missing. Plain text, short headings, bulleted lines, no tables.';
+  const ASKS = {
+    daily: 'Make today\'s to-do list for each of Jade, Jodi and Judy. Order each list: Overdue (oldest first), Due today, Due in the next 7 days, Revenue calls (up to 3). Each item: client, one-line action, due date. End each list with the item count and the single top priority.',
+    attention: 'List what needs attention now: overdue tasks, tasks due in the next 3 days, and anything marked Needs attention. Group by person. Say what to do first.',
+    friday: 'Write the owner\'s Friday summary: open and overdue counts by person, what was finished (done tasks), revenue opportunities in play, what is due next week from tasks and calendar, and three things to focus on next week.',
+    revenue: 'Build a revenue call plan from the Revenue tasks: rank them, give a one-line opener for each call, and say who should make it.',
+  };
+  let lastText = '';
+  document.querySelectorAll('[data-report]').forEach((b) => b.addEventListener('click', async () => {
+    if (!sample) return;
+    const kind = b.dataset.report;
+    const data = {
+      today: todayISO(),
+      tasks: tasks.map(({ title, section, client, owner, due, done }) => ({ title, list: section, client, owner, due, done })),
+      calendar: events.slice(0, 10).map((e) => ({ title: e.summary, start: (e.start && (e.start.dateTime || e.start.date)) || '' })),
+    };
+    const out = $('out');
+    out.hidden = false; $('out-bar').hidden = true; out.textContent = 'Thinking…';
+    document.querySelectorAll('[data-report]').forEach((x) => (x.disabled = true));
+    note('ai-note', '');
+    try {
+      const res = await sample(RULES + '\n\nTask: ' + ASKS[kind] + '\n\nData (JSON):\n' + JSON.stringify(data), { onText: ({ text }) => { out.textContent = text; }, modelTier: 'default' });
+      lastText = res.text; out.textContent = res.text;
+      $('out-bar').hidden = false;
+      $('out-note').textContent = res.truncated ? 'The report was cut short.' : '';
+    } catch (e) {
+      out.hidden = true;
+      const code = e && e.code;
+      note('ai-note', code === 'not_granted' ? 'Claude was not allowed to write reports on this board.' : code === 'rate_limited' ? 'Too many reports in a row. Wait a minute and try again.' : 'The report did not finish. Try again.', true);
+    } finally {
+      document.querySelectorAll('[data-report]').forEach((x) => (x.disabled = !sample));
+    }
+  }));
+  $('copy').addEventListener('click', () => {
+    const done = () => { $('out-note').textContent = 'Copied. Paste it into Jarvis on the worklist.'; };
+    try {
+      navigator.clipboard.writeText(lastText).then(done, () => { selectOut(); $('out-note').textContent = 'Press Ctrl+C (or ⌘C) to copy the selected report.'; });
+    } catch (e) { selectOut(); }
+  });
+  function selectOut() { const r = document.createRange(); r.selectNodeContents($('out')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+})();
+</script>
