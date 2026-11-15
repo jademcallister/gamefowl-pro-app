@@ -158,13 +158,13 @@
 
   async function saveCheck(results) {
     const band = $("hBand").value.trim();
-    if (!band) { alert("Enter the bird's Band ID at the top first."); $("hBand").focus(); return; }
+    if (!band) { toast("Enter the bird's Band ID at the top first."); $("hBand").focus(); return; }
     await addEntry({
       band, type: "check", date: today(),
       data: { symptoms: [...state.selected], top: results.slice(0, 3).map((r) => ({ id: r.c.id, name: r.c.name, pct: r.pct })) },
     });
     await refreshBandList();
-    alert(`Saved to ${band}'s log.`);
+    toast(`Saved to ${band}'s log.`);
   }
 
   // ---------- bird log ----------
@@ -179,14 +179,14 @@
 
   function logBand() {
     const b = $("hLogBand").value.trim();
-    if (!b) { alert("Enter a Band ID."); $("hLogBand").focus(); }
+    if (!b) { toast("Enter a Band ID."); $("hLogBand").focus(); }
     return b;
   }
 
   async function addPhotos() {
     const band = logBand(); if (!band) return;
     const files = [...$("hPhotoFile").files];
-    if (!files.length) { alert("Choose one or more photos."); return; }
+    if (!files.length) { toast("Choose one or more photos."); return; }
     const note = $("hPhotoNote").value.trim();
     const date = $("hPhotoDate").value || today();
     for (const f of files) {
@@ -201,7 +201,7 @@
   async function addTreatment() {
     const band = logBand(); if (!band) return;
     const drug = $("hTxDrug").value.trim();
-    if (!drug) { alert("Enter what you gave."); $("hTxDrug").focus(); return; }
+    if (!drug) { toast("Enter what you gave."); $("hTxDrug").focus(); return; }
     await addEntry({
       band, type: "treatment", date: $("hTxStart").value || today(),
       data: {
@@ -323,7 +323,13 @@
     $("hTxAdd").addEventListener("click", addTreatment);
     $("hLog").addEventListener("click", async (ev) => {
       const del = ev.target.closest("[data-del]");
-      if (del && confirm("Delete this entry?")) { await deleteEntry(Number(del.dataset.del)); renderLog(); return; }
+      if (del) {
+        // Tap twice to delete: pop-up confirm dialogs are blocked inside Claude artifacts.
+        if (del.dataset.armed) { await deleteEntry(Number(del.dataset.del)); renderLog(); toast("Deleted."); return; }
+        del.dataset.armed = "1"; del.textContent = "Tap again to delete";
+        setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = "Delete"; } }, 4000);
+        return;
+      }
       const dose = ev.target.closest("[data-dose]");
       if (dose) {
         const e = (await allEntries()).find((x) => x.id === Number(dose.dataset.dose));

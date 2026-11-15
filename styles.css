@@ -218,3 +218,10 @@ nav { flex-wrap: wrap; }
 #expert .refs a { color: var(--h-cyan); }
 
 @media (max-width: 760px) { .x-actions { flex-wrap: wrap; } .x-actions .spacer { display: none; } #expert .x-actions button { flex: 1 1 auto; } }
+
+/* On-page message */
+#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0;
+  background: #f5f5f7; color: #111; padding: 10px 16px; border-radius: 10px; font-size: 15px; font-weight: bold; z-index: 50;
+  transition: opacity .2s, transform .2s; pointer-events: none; max-width: calc(100% - 32px); }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }

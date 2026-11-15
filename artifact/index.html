@@ -1,0 +1,192 @@
+<title>Gamefowl Pro</title>
+<style>:root { color-scheme: dark; } html, body { background: #111; color: #fff; }</style>
+<link rel="stylesheet" href="styles.css">
+<header>
+  <h1>Gamefowl Pro Breeder System</h1>
+</header>
+
+<nav>
+  <button onclick="showTab('evaluate')">Evaluate</button>
+  <button onclick="showTab('decision')">Decision</button>
+  <button onclick="showTab('records')">Records</button>
+  <button onclick="showTab('health')">Health</button>
+  <button onclick="showTab('expert')">Ask an Expert</button>
+</nav>
+
+<main>
+
+<section id="evaluate" class="tab active">
+  <h2>Evaluate Bird</h2>
+
+  <input id="band" placeholder="Band ID">
+
+  <label>Score (1-10)</label>
+  <input type="range" id="score" min="1" max="10" value="5">
+
+  <button onclick="save()">Save</button>
+</section>
+
+<section id="decision" class="tab">
+  <h2>Decision</h2>
+  <div id="result"></div>
+</section>
+
+<section id="records" class="tab">
+  <h2>Records</h2>
+  <div id="recordsList"></div>
+</section>
+
+<section id="health" class="tab">
+  <div class="h-hero">
+    <h2>Health Check</h2>
+    <p>Pick a body area, tick what you see, and get the likely causes and what to do.</p>
+    <div class="h-switch">
+      <button type="button" class="on" data-hview="hCheckView">Symptom Checker</button>
+      <button type="button" data-hview="hLogView">Bird Log</button>
+    </div>
+  </div>
+
+  <datalist id="hBandList"></datalist>
+
+  <div id="hCheckView" class="hview">
+    <div class="h-card">
+      <label for="hBand">Bird (Band ID, optional)</label>
+      <input id="hBand" list="hBandList" placeholder="e.g. RR-114" autocomplete="off">
+
+      <h3 class="step"><span>1</span> Select body area</h3>
+      <div id="hAreas" class="areas"></div>
+
+      <h3 class="step"><span>2</span> Pick symptoms</h3>
+      <input id="hSearch" type="search" placeholder="Search all symptoms (e.g. ear, cough, limp)" autocomplete="off">
+      <div id="hSymptoms" class="symptoms"></div>
+
+      <div class="sel-bar">
+        <div id="hSelected" class="pills"></div>
+        <div class="sel-actions">
+          <button type="button" class="ghost" id="hClear">Clear</button>
+          <button type="button" class="primary" id="hCheckBtn" disabled>Pick symptoms to check</button>
+        </div>
+      </div>
+    </div>
+    <div id="hResults" class="h-card" hidden></div>
+  </div>
+
+  <div id="hLogView" class="hview" hidden>
+    <div class="h-card">
+      <label for="hLogBand">Bird (Band ID)</label>
+      <input id="hLogBand" list="hBandList" placeholder="e.g. RR-114" autocomplete="off">
+
+      <div class="log-forms">
+        <fieldset>
+          <legend>Add photos</legend>
+          <input id="hPhotoFile" type="file" accept="image/*" multiple>
+          <input id="hPhotoDate" type="date">
+          <input id="hPhotoNote" placeholder="Note (e.g. right ear, day 3 after flush)">
+          <button type="button" class="primary" id="hPhotoAdd">Save photos</button>
+        </fieldset>
+        <fieldset>
+          <legend>Add treatment</legend>
+          <input id="hTxDrug" placeholder="What you gave (e.g. chlorhexidine flush)">
+          <input id="hTxDose" placeholder="Dose / amount">
+          <select id="hTxRoute">
+            <option>Topical</option><option>Ear flush</option><option>In water</option><option>Oral</option><option>Injection</option><option>Feed</option>
+          </select>
+          <div class="row2">
+            <label>Start<input id="hTxStart" type="date"></label>
+            <label>Days<input id="hTxDays" type="number" min="1" placeholder="5"></label>
+            <label>Withdrawal days<input id="hTxWd" type="number" min="0" placeholder="0"></label>
+          </div>
+          <input id="hTxReason" placeholder="Reason (e.g. ear abscess)">
+          <button type="button" class="primary" id="hTxAdd">Save treatment</button>
+        </fieldset>
+      </div>
+    </div>
+    <div id="hLog" class="h-card"></div>
+  </div>
+</section>
+
+<section id="expert" class="tab">
+  <div class="h-hero">
+    <h2>Ask an Expert</h2>
+    <p>Poultry and vet knowledge, backed by the app's condition library, Merck Vet Manual and other trusted sites, plus your bird's own log and photos.</p>
+  </div>
+
+  <div class="h-card">
+    <details id="xSettings">
+      <summary>⚙ Settings</summary>
+      <label for="xMode">Connect to Claude using</label>
+      <select id="xMode">
+        <option value="key">My API key (saved on this device)</option>
+        <option value="server">My server (Vercel)</option>
+      </select>
+      <div id="xKeyRow">
+        <label for="xKey">Anthropic API key</label>
+        <input id="xKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+        <p class="muted">Get one at console.anthropic.com → API Keys. It's stored only in this browser and sent only to Anthropic. Usage is billed to that account.</p>
+      </div>
+      <div id="xServerRow" hidden>
+        <label for="xServer">Server address</label>
+        <input id="xServer" placeholder="/api/ask">
+        <label for="xPass">Passcode</label>
+        <input id="xPass" type="password" autocomplete="off">
+      </div>
+      <button type="button" class="primary" id="xSave">Save settings</button> <span id="xSettingsMsg" class="muted"></span>
+    </details>
+    <p id="xSetupHint" class="alert" hidden>No API key yet? Use <strong>Ask in Claude app</strong> below. It sends your question and the bird's details to your Claude app. To chat right here instead, add a key in <strong>⚙ Settings</strong>.</p>
+
+    <div class="x-bird">
+      <div>
+        <label for="xBand">Bird (Band ID, optional)</label>
+        <input id="xBand" list="hBandList" placeholder="e.g. RR-114" autocomplete="off">
+      </div>
+      <label class="x-check"><input type="checkbox" id="xUseLog" checked> Include this bird's log and last 3 photos</label>
+    </div>
+  </div>
+
+  <div class="h-card">
+    <details id="xLibrary">
+      <summary>📚 Sources library</summary>
+      <p class="muted">The expert searches and reads these sites, plus the app's condition library, and lists what it used under each answer.</p>
+      <div id="xLibraryList"></div>
+    </details>
+  </div>
+
+  <div class="h-card x-chat-card">
+    <div class="x-chat-head"><h3>Conversation</h3><button type="button" class="ghost sm" id="xNew">New chat</button></div>
+    <div id="xEmpty" class="x-empty">
+      <p class="muted">Try one of these, or ask anything about your birds:</p>
+      <div id="xSuggest" class="x-suggest">
+        <button type="button">His ear keeps filling up with cheesy pus after I clean it. What should I do next?</button>
+        <button type="button">What vaccines should my breeding flock have, and when?</button>
+        <button type="button">How do I tell fowl pox scabs from a healed peck wound?</button>
+        <button type="button">What's a good quarantine plan for a new brood cock?</button>
+      </div>
+    </div>
+    <div id="xChat" class="x-chat" aria-live="polite"></div>
+
+    <div class="x-composer">
+      <div id="xAttach" class="x-attach"></div>
+      <textarea id="xInput" rows="3" placeholder="Describe what you're seeing, or ask a question…"></textarea>
+      <div class="x-actions">
+        <input id="xPhoto" type="file" accept="image/*" multiple hidden>
+        <button type="button" class="ghost" id="xPhotoBtn">📷 Add photos</button>
+        <span class="spacer"></span>
+        <button type="button" class="ghost" id="xStop" hidden>Stop</button>
+        <button type="button" class="ghost" id="xInClaude" title="No API key needed: opens your Claude app with this question and the bird's details">Ask in Claude app</button>
+        <button type="button" class="primary" id="xSend">Ask</button>
+      </div>
+      <p id="xClaudeMsg" class="muted"></p>
+    </div>
+    <p class="disclaimer">AI guidance, not a vet exam. For breathing trouble, nerve signs or several sick birds, call a vet. Suspected bird flu or Newcastle: USDA 1-866-536-7593.</p>
+  </div>
+</section>
+
+</main>
+
+<script src="app.js"></script>
+<script src="health-data.js"></script>
+<script src="health-refs.js"></script>
+<script src="health-images.js" onerror="window.HEALTH_IMAGES = {}"></script>
+<script src="health.js"></script>
+<script src="expert-core.js"></script>
+<script src="ask-expert.js"></script>

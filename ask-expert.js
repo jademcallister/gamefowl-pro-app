@@ -11,7 +11,53 @@
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
   };
 
-  const chat = { history: [], busy: false, abort: null, pending: [], photosUsed: 0, sentPhotoIds: new Set() };
+  const chat = { history: [], busy: false, abort: null, pending: [], photosUsed: 0, sentPhotoIds: new Set(),
+    sample: null, imageLimit: 0, turns: [] };
+
+  // Built-in Claude (inside a Claude artifact): no key, no browsing.
+  const SAMPLE_NOTE = `
+
+You are running inside the Gamefowl Pro artifact on the keeper's own Claude account. You cannot search or open web pages here, so rely on the knowledge base below and your own veterinary knowledge. In the Sources list, prefer the Merck and reference URLs given in the knowledge base and source library; only give another URL when you are confident it exists, and otherwise name the source without a link.`;
+  let rulesText = null;
+  const rules = () => rulesText || (rulesText = ExpertCore.INSTRUCTIONS + SAMPLE_NOTE + "\n\n" +
+    ExpertCore.knowledgeBase(HEALTH_CONDITIONS, healthRefLinks, HEALTH_SOURCES));
+  const SAMPLE_ERRORS = {
+    not_granted: "Claude access was declined for this page. Reload the page to be asked again.",
+    sampling_disabled: "Claude isn't available on this account here.",
+    rate_limited: "Too many questions in a row, or you've reached your Claude usage limit. Wait a bit and try again.",
+    session_expired: "Your Claude session expired. Sign in again, then retry.",
+    refused: "Claude declined that question. Try rewording it.",
+    image_rejected: "One of the photos couldn't be used. Try a different photo.",
+    prompt_too_large: "This conversation got too long. Start a new chat.",
+    empty_completion: "No answer came back. Try rewording the question.",
+  };
+  const linksIn = (text) => {
+    const seen = new Map();
+    for (const m of text.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g)) if (!seen.has(m[2])) seen.set(m[2], m[1]);
+    for (const m of text.matchAll(/(?<![(\["])https?:\/\/[^\s)<>\]]+/g)) { const u = m[0].replace(/[.,;:]+$/, ""); if (!seen.has(u)) seen.set(u, u); }
+    return [...seen].map(([url, title]) => ({ url, title }));
+  };
+
+  async function sendSampleMode(question, record, blobs, handlers) {
+    let content = question;
+    if (record) content += "\n\n" + record;
+    const imgs = blobs.slice(0, chat.imageLimit);
+    if (imgs.length) content += `\n\n${imgs.length} photo(s) of the bird are attached.`;
+    else if (blobs.length) content += "\n\n(The keeper has photos, but they couldn't be attached here.)";
+    const input = [{ role: "user", content: rules() }, ...chat.turns.slice(-16), { role: "user", content }];
+    try {
+      const res = await chat.sample(input, {
+        cache: false, signal: handlers.signal, images: imgs.length ? imgs : undefined,
+        onText: ({ text }) => handlers.onText(text, true),
+      });
+      chat.turns.push({ role: "user", content: question + (imgs.length ? ` [${imgs.length} photo(s) attached]` : "") }, { role: "assistant", content: res.text });
+      return { text: res.text, truncated: res.truncated, sources: linksIn(res.text) };
+    } catch (e) {
+      const err = new Error(e && e.code === "cancelled" ? "Stopped." : (SAMPLE_ERRORS[e && e.code] || "Couldn't reach Claude. Try again in a moment."));
+      err.partial = e && e.code !== "refused" ? e.text : "";
+      throw err;
+    }
+  }
 
   // ---------- tiny, safe markdown ----------
   function md(src) {
@@ -58,7 +104,7 @@
     $("xKeyRow").hidden = !key;
     $("xServerRow").hidden = key;
     const ready = key ? !!store.get("expert.key") : !!store.get("expert.server");
-    $("xSetupHint").hidden = ready;
+    if (!chat.sample) $("xSetupHint").hidden = ready;
   }
 
   // ---------- bird context ----------
@@ -177,7 +223,7 @@
     const question = q || "What do you see in these photos?";
     const band = $("xBand").value.trim();
     const useLog = band && $("xUseLog").checked;
-    const mode = store.get("expert.mode", "key");
+    const mode = chat.sample ? "claude" : store.get("expert.mode", "key");
     if (mode === "key" && !store.get("expert.key")) { $("xSettings").open = true; $("xKey").focus(); return; }
 
     chat.busy = true; $("xSend").disabled = true; $("xStop").hidden = false;
@@ -191,7 +237,7 @@
 
     let text = "";
     const handlers = {
-      onText: (d) => { text += d; bodyEl.innerHTML = md(text); statusEl.textContent = ""; },
+      onText: (d, whole) => { text = whole ? d : text + d; bodyEl.innerHTML = md(text); statusEl.textContent = ""; },
       onStatus: (s) => { statusEl.textContent = s; },
     };
     chat.abort = new AbortController();
@@ -209,6 +255,14 @@
         logPhotos = record.photos.filter((e) => !chat.sentPhotoIds.has(e.id));
       }
       const allPhotos = [...attached.map((p) => p.blob), ...logPhotos.map((e) => e.blob)];
+      if (mode === "claude") {
+        const result = await sendSampleMode(question, record && record.text, allPhotos, handlers);
+        logPhotos.forEach((e) => chat.sentPhotoIds.add(e.id));
+        statusEl.textContent = "";
+        bodyEl.innerHTML = md(result.text) + (result.truncated ? '<p class="muted">The answer was cut short. Ask for less at a time.</p>' : "");
+        finish(out, band, question, result.text, result.sources);
+        return;
+      }
       const room = Math.max(0, MAX_PHOTOS_PER_CHAT - chat.photosUsed);
       for (const blob of allPhotos.slice(0, room)) content.push(await imageBlock(blob));
       chat.photosUsed += Math.min(allPhotos.length, room);
@@ -227,20 +281,11 @@
       if (result.stop_reason === "refusal") bodyEl.innerHTML += '<p class="muted">Claude declined to answer this one. Try rephrasing the question.</p>';
       if (!text) bodyEl.innerHTML = md(result.content.filter((b) => b.type === "text").map((b) => b.text).join("")) || '<p class="muted">No answer came back.</p>';
       const finalText = result.content.filter((b) => b.type === "text").map((b) => b.text).join("") || text;
-      const foot = document.createElement("div");
-      foot.className = "x-foot";
-      foot.innerHTML = `${result.sources && result.sources.length ? `<details class="x-sources"><summary>Sources (${result.sources.length})</summary><ul>${result.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join("")}</ul></details>` : ""}
-        ${band ? `<button type="button" class="ghost sm">Save to ${esc(band)}'s log</button>` : ""}`;
-      out.appendChild(foot);
-      const saveBtn = foot.querySelector("button");
-      if (saveBtn) saveBtn.onclick = async () => {
-        await HealthDB.addEntry({ band, type: "expert", date: new Date().toISOString().slice(0, 10), data: { question, answer: finalText, sources: result.sources || [] } });
-        saveBtn.textContent = "Saved ✓"; saveBtn.disabled = true;
-        HealthDB.refreshBandList().catch(() => {});
-      };
+      finish(out, band, question, finalText, result.sources);
     } catch (err) {
       statusEl.textContent = "";
-      bodyEl.innerHTML = (text ? md(text) : "") + `<p class="x-err">${esc(err.message || String(err))}</p>`;
+      const keep = err.partial != null ? err.partial : text;
+      bodyEl.innerHTML = (keep ? md(keep) : "") + `<p class="x-err">${esc(err.message || String(err))}</p>`;
       // The turn didn't complete, so it isn't added to history; let them retry.
       $("xInput").value = question;
     } finally {
@@ -249,9 +294,23 @@
     }
   }
 
+  function finish(out, band, question, finalText, sources) {
+      const foot = document.createElement("div");
+      foot.className = "x-foot";
+      foot.innerHTML = `${sources && sources.length ? `<details class="x-sources"><summary>Sources (${sources.length})</summary><ul>${sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></li>`).join("")}</ul></details>` : ""}
+        ${band ? `<button type="button" class="ghost sm">Save to ${esc(band)}'s log</button>` : ""}`;
+      out.appendChild(foot);
+      const saveBtn = foot.querySelector("button");
+      if (saveBtn) saveBtn.onclick = async () => {
+        await HealthDB.addEntry({ band, type: "expert", date: new Date().toISOString().slice(0, 10), data: { question, answer: finalText, sources: sources || [] } });
+        saveBtn.textContent = "Saved ✓"; saveBtn.disabled = true;
+        HealthDB.refreshBandList().catch(() => {});
+      };
+  }
+
   function newChat() {
     if (chat.busy) return;
-    chat.history = []; chat.photosUsed = 0; chat.sentPhotoIds.clear();
+    chat.history = []; chat.turns = []; chat.photosUsed = 0; chat.sentPhotoIds.clear();
     $("xChat").innerHTML = "";
     $("xEmpty").hidden = false;
   }
@@ -338,5 +397,21 @@
   document.addEventListener("DOMContentLoaded", () => {
     if (!$("expert")) return;
     wire(); loadSettings(); renderLibrary();
+    initBuiltInClaude();
   });
+
+  async function initBuiltInClaude() {
+    let sample = null;
+    try { sample = window.claude && window.claude.use ? await window.claude.use("sample") : null; } catch (e) {}
+    if (!sample) return;
+    chat.sample = sample;
+    try { const lim = await sample.limits(); chat.imageLimit = (lim.images && lim.images.maxCount) || 0; } catch (e) {}
+    $("xSettings").hidden = true;
+    $("xInClaude").hidden = true;
+    const hint = $("xSetupHint");
+    hint.className = "muted x-mode-note";
+    hint.textContent = `Answers come from Claude on your own Claude account, using the app's ${HEALTH_CONDITIONS.length}-condition library and Merck references. Claude can't browse the web here, so open the source links to double-check.`;
+    hint.hidden = false;
+    if (!chat.imageLimit) $("xPhotoBtn").title = "Photos can't be sent to Claude in this view";
+  }
 })();

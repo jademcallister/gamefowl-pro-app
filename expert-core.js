@@ -111,7 +111,7 @@ Scope: health, nutrition, housing, breeding, biosecurity and welfare. Cockfighti
     return [...seen].map(([url, title]) => ({ url, title }));
   }
 
-  const api = { MODEL, TRUSTED_DOMAINS, buildParams, runTurn, collectSources };
+  const api = { MODEL, TRUSTED_DOMAINS, INSTRUCTIONS, knowledgeBase, buildParams, runTurn, collectSources };
   if (typeof module !== "undefined") module.exports = api;
   else root.ExpertCore = api;
 })(typeof window !== "undefined" ? window : globalThis);

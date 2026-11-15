@@ -1,3 +1,18 @@
+// On-page message: pop-up alerts are blocked inside Claude artifacts.
+function toast(msg) {
+  let el = document.getElementById("toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "toast";
+    el.setAttribute("role", "status");
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
 function showTab(id) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -8,7 +23,7 @@ function save() {
   const score = document.getElementById("score").value;
 
   if (!band) {
-    alert("Enter Band ID");
+    toast("Enter a Band ID first.");
     return;
   }
 
@@ -19,7 +34,7 @@ function save() {
 
   localStorage.setItem("records", JSON.stringify(data));
 
-  alert("Saved!");
+  toast(`Saved ${band}.`);
 
   calculate(score);
   loadRecords();
