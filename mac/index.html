@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAC · AI back office for independent agencies</title>
+<meta name="description" content="MAC (McAllister Agency Command) reads every inbound email, does the intake, quoting, renewal and service work, and hands your team the finished product.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v5h5M12 17v-6M9.5 13.5 12 11l2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-renew" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3M18 3v4h-4M6 21v-4h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v6H5a1 1 0 0 1-1-1zM20 14h-3v6h2a1 1 0 0 0 1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="nav">
+  <a class="logo" href="#top" aria-label="MAC home"><span class="logo-mark">M</span>MAC</a>
+  <nav class="nav-links" aria-label="Main">
+    <a href="#platform">Product</a>
+    <a href="#team">Team</a>
+    <a href="#trust">Security</a>
+    <a href="#resources">Resources</a>
+    <a href="#plans">Pricing</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="btn btn-ghost" data-link="signIn" href="#start">Sign in</a>
+    <a class="btn btn-dark" data-link="demo" href="#start">See a demo <svg class="ic-s"><use href="#i-chev"/></svg></a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <h1>AI for independent agencies</h1>
+  <p class="lead">Quote, renew and service every policy faster with an AI back office that never drops a task.</p>
+  <form class="email-pill" data-demo-form>
+    <input type="email" name="email" placeholder="What's your work email?" aria-label="Work email" required>
+    <button class="btn btn-dark" type="submit">See a demo <svg class="ic-s"><use href="#i-chev"/></svg></button>
+  </form>
+  <p class="form-note" hidden>Thanks, we'll be in touch.</p>
+</section>
+
+<!-- LINES MARQUEE (replaces customer logos) -->
+<section class="marquee-wrap">
+  <p class="marquee-title">Built for the lines independent agencies write every day</p>
+  <div class="marquee"><div class="marquee-track">
+    <span>Personal Auto</span><span>Homeowners</span><span>Farm &amp; Ranch</span><span>Equine</span><span>Commercial GL</span><span>Workers Comp</span><span>Umbrella</span><span>Contractors</span><span>BOP</span>
+    <span aria-hidden="true">Personal Auto</span><span aria-hidden="true">Homeowners</span><span aria-hidden="true">Farm &amp; Ranch</span><span aria-hidden="true">Equine</span><span aria-hidden="true">Commercial GL</span><span aria-hidden="true">Workers Comp</span><span aria-hidden="true">Umbrella</span><span aria-hidden="true">Contractors</span><span aria-hidden="true">BOP</span>
+  </div></div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how wrap">
+  <h2 class="h-left">MAC just does your work &mdash;<br>before you even know to.</h2>
+  <a class="link-arrow" href="#platform">See how <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+
+  <div class="steps">
+    <div class="step">
+      <p class="step-h"><span>01</span> Reads every inbound email</p>
+      <div class="step-card">
+        <div class="inbox-chips"><span class="chip-src">Outlook <i></i></span><span class="chip-src">Gmail <i></i></span></div>
+        <div class="inbox">
+          <div class="mail active">
+            <span class="av">RC</span>
+            <div><b>Rita Coleman</b><small>Umbrella quote</small></div>
+            <span class="file pdf">Dec-page</span>
+            <div class="mail-tag"><svg class="ic-s"><use href="#i-tag"/></svg> Quoting</div>
+          </div>
+          <div class="mail"><span class="av av2">DW</span><div><b>Dale Whitaker</b><small class="blue">Farm renewal</small></div><span class="file pdf">Renewal</span></div>
+          <div class="mail"><span class="av av3">LP</span><div><b>Lena Park</b><small class="blue">COI request</small></div><span class="file doc">Contract</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dots" aria-hidden="true"></div>
+    <div class="step">
+      <p class="step-h"><span>02</span> Does the work proactively</p>
+      <div class="step-card">
+        <ul class="tasklist" data-tasklist>
+          <li><i></i><svg class="ic-s"><use href="#i-upload"/></svg> Intake</li>
+          <li><i></i><svg class="ic-s"><use href="#i-tag"/></svg> Quoting</li>
+          <li><i></i><svg class="ic-s"><use href="#i-renew"/></svg> Renewals</li>
+          <li><i></i><svg class="ic-s"><use href="#i-headset"/></svg> Servicing</li>
+          <li><i></i><svg class="ic-s"><use href="#i-shield"/></svg> Claims</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dots" aria-hidden="true"></div>
+    <div class="step">
+      <p class="step-h"><span>03</span> Sends you the finished work</p>
+      <div class="step-card">
+        <div class="status-pill"><svg class="ic-s"><use href="#i-renew"/></svg> Renewing</div>
+        <div class="email-card">
+          <div class="em-from"><span class="logo-mark sm">M</span><div><b>MAC</b><small class="mono">to rita@coleman-family.com</small></div></div>
+          <p class="em-subj">Renewal options</p>
+          <span class="file doc">Renewal-options</span>
+          <div class="em-actions"><span>&larr;</span><span class="dark">&rarr;</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM TABS -->
+<section class="platform wrap" id="platform">
+  <h2 class="h-center">One command center for your entire back office.</h2>
+  <a class="link-arrow center" href="#plans">Drill in <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="0" class="on"><svg class="ic"><use href="#i-upload"/></svg> Intake</button>
+    <button role="tab" data-tab="1"><svg class="ic"><use href="#i-tag"/></svg> Quoting</button>
+    <button role="tab" data-tab="2"><svg class="ic"><use href="#i-renew"/></svg> Renewals</button>
+    <button role="tab" data-tab="3"><svg class="ic"><use href="#i-headset"/></svg> Servicing</button>
+    <button role="tab" data-tab="4"><svg class="ic"><use href="#i-shield"/></svg> Claims</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-copy">
+      <div class="panel-title"><span class="panel-ic"><svg class="ic"><use data-p="icon" href="#i-upload"/></svg></span><h3 data-p="title">Intake</h3></div>
+      <p class="panel-sub" data-p="sub">Call in. Task out.</p>
+      <ul class="checks" data-p="checks"></ul>
+    </div>
+    <div class="email-card big">
+      <div class="em-from"><span class="logo-mark sm">M</span><div><b>MAC</b><small class="mono">to team@mcallisterins.com</small></div></div>
+      <p class="em-subj blue" data-p="subj">New intake logged</p>
+      <span class="file doc" data-p="file">Intake-notes</span>
+      <div class="em-actions"><span>&larr;</span><span class="dark">&rarr;</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM (replaces customer stories) -->
+<section class="team wrap" id="team">
+  <h2 class="h-center navy">What would your team do with more time?</h2>
+  <a class="link-arrow center muted" href="#time">See the math <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+  <div class="team-grid">
+    <article class="tcard t1"><p class="tcard-k">Producers</p><p class="tcard-q">&ldquo;Meet more clients instead of re-keying ACORDs.&rdquo;</p><span class="badge">Small</span></article>
+    <article class="tcard t2"><p class="tcard-k">Account managers</p><p class="tcard-q">&ldquo;Start every day with renewals already compared.&rdquo;</p><span class="badge">Growing</span></article>
+    <article class="tcard t3"><p class="tcard-k">Agency owners</p><p class="tcard-q">&ldquo;See revenue at risk before it walks out the door.&rdquo;</p><span class="badge">Multi-office</span></article>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline wrap">
+  <h2 class="h-center">Go live in days, not months.</h2>
+  <a class="link-arrow center muted" data-link="demo" href="#start">Start now <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+  <div class="tl-bar"><span>Today</span><span>Day 5</span><span>Day 30</span></div>
+  <div class="tl-grid">
+    <div class="tl-card"><h4>Get started.</h4><ul><li>Add your carriers</li><li>Connect your inbox</li><li>Invite your team</li></ul></div>
+    <div class="tl-card"><h4>Get comfortable.</h4><ul><li>Log calls and walk-ins</li><li>Compare renewal quotes</li><li>Send client letters</li></ul></div>
+    <div class="tl-card"><h4>Ask why you didn't start earlier.</h4><ul><li>Every task has an owner</li><li>No missed renewals</li><li>Cross-sell list every week</li></ul></div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust wrap" id="trust">
+  <h2 class="h-center">Built for E&amp;O, not just speed.</h2>
+  <a class="link-arrow center muted" href="#resources">How we work <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+  <div class="trust-grid">
+    <div class="trust-card"><span class="seal s1"><svg class="ic"><use href="#i-shield"/></svg></span><b>Human approval</b><small>A licensed agent signs off before anything reaches a client.</small></div>
+    <div class="trust-card"><span class="seal s2"><svg class="ic"><use href="#i-upload"/></svg></span><b>Every step logged</b><small>Dated file notes on every task, ready for an E&amp;O review.</small></div>
+    <div class="trust-card"><span class="seal s3"><svg class="ic"><use href="#i-check"/></svg></span><b>Never decides coverage</b><small>MAC prepares the work. Coverage calls stay with your agents and carriers.</small></div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans wrap" id="plans">
+  <h2 class="h-center">For solo, growing, and every agency in between.</h2>
+  <a class="link-arrow center muted" data-link="demo" href="#start">Compare plans <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+  <div class="plan-grid">
+    <div class="plan"><div class="plan-art light"><div class="bld b-small"></div></div><h4>Solo producer</h4><p>Run a full book without adding headcount.</p><p class="price" data-price="solo"></p></div>
+    <div class="plan"><div class="plan-art mid"><div class="bld b-mid"></div><div class="bld b-mid2"></div></div><h4>Growing agency</h4><p>Automate the busywork and give your team their day back.</p><p class="price" data-price="growing"></p></div>
+    <div class="plan"><div class="plan-art dark"><div class="bld b-big"></div><div class="bld b-big2"></div><div class="bld b-big3"></div></div><h4>Multi-office</h4><p>Owner reports, shared worklists, controls and more.</p><p class="price" data-price="multi"></p></div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section class="resources wrap" id="resources">
+  <h2 class="h-left">Learn how AI is changing the independent agency.</h2>
+  <a class="link-arrow muted" href="#resources">Get inspired <svg class="ic-s"><use href="#i-arrow"/></svg></a>
+  <div class="res-grid">
+    <article class="res"><div class="res-art r1"></div><h4>The 60/45/30 renewal rhythm</h4><p>Why the best agencies start every renewal two months out.</p></article>
+    <article class="res"><div class="res-art r2"></div><h4>5 intake questions that prevent E&amp;O claims</h4><p>The checkpoints every call and walk-in should hit.</p></article>
+    <article class="res"><div class="res-art r3"></div><h4>Account rounding without the hard sell</h4><p>Finding the missing umbrella before the client does.</p></article>
+  </div>
+</section>
+
+<!-- TIME CALCULATOR -->
+<section class="time wrap" id="time">
+  <p class="time-k">Your agency could get back</p>
+  <p class="time-n"><span data-hours>0</span> hours</p>
+  <p class="time-k">every year. Calculate yours:</p>
+  <div class="calc">
+    <label>Tasks per week <input type="range" min="10" max="400" value="120" data-calc="tasks"><output data-out="tasks">120</output></label>
+    <label>Minutes saved per task <input type="range" min="2" max="45" value="12" data-calc="mins"><output data-out="mins">12</output></label>
+  </div>
+  <p class="calc-note">An estimate: tasks &times; minutes saved &times; 50 working weeks.</p>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="foot" id="start">
+  <div class="foot-cta">
+    <p class="foot-k">AI for independent agencies</p>
+    <h2>Get started today.</h2>
+    <form class="email-pill on-dark" data-demo-form>
+      <input type="email" name="email" placeholder="What's your work email?" aria-label="Work email" required>
+      <button class="btn btn-light" type="submit">See a demo <svg class="ic-s"><use href="#i-chev"/></svg></button>
+    </form>
+    <p class="form-note" hidden>Thanks, we'll be in touch.</p>
+  </div>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="logo light" href="#top"><span class="logo-mark inv">M</span>MAC</a>
+      <p data-cfg="supportEmail"></p>
+      <p><span data-cfg="agencyName"></span><br><span data-cfg="agencyCity"></span></p>
+    </div>
+    <div><h5>Platform</h5><a href="#platform">Product</a><a href="#plans">Pricing</a><a href="#team">Team</a></div>
+    <div><h5>Resources</h5><a href="#resources">Insights</a><a data-cfg-link="termsUrl">Terms</a><a data-cfg-link="privacyUrl">Privacy</a></div>
+    <div><h5>Company</h5><a href="#trust">Security</a><a data-cfg-link="contactUrl">Contact</a></div>
+  </div>
+  <p class="legal"><b>All rights reserved.</b> MAC (McAllister Agency Command) is an operations tool. It prepares quotes, letters, renewal comparisons and file notes for review; it does not bind coverage, make coverage determinations or give legal advice. All coverage is subject to the terms, conditions and exclusions of the policy as issued by the carrier. Insurance products are offered through licensed agents. Time-saved figures on this page are estimates, not guarantees.</p>
+</footer>
+
+<a class="sticky-cta btn btn-dark" data-link="demo" href="#start">See a demo <svg class="ic-s"><use href="#i-chev"/></svg></a>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
