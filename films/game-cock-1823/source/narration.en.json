@@ -1,0 +1,15 @@
+{
+  "engine": "edge",
+  "voice": "en-US-AndrewNeural",
+  "rate": "+4%",
+  "beats": {
+    "hook": "In [[year]]1823, a London handbook told breeders exactly what a [[perfect]]perfect game cock should look like.",
+    "book": "It was called [[title]]The Game Cock, by [[amateur]]a Distinguished Amateur. Price: [[price]]one shilling and sixpence.",
+    "origin": "He traced the breed to the [[india]]wild cock of India, and swore the [[reds]]dark reds were the hardiest of all.",
+    "form": "The ideal bird? [[eyes]]Eyes sparkling with fire. A [[head]]small head. A [[beak]]strong beak. A [[neck]]long neck. [[shoulders]]Broad shoulders. The whole body shaped like a [[cone]]lengthened cone.",
+    "feathers": "Feathers [[short]]short, stiff and glossy, lying [[close]]close to the skin. That was the mark of a [[sound]]sound bird.",
+    "colours": "The colours most admired? [[red]]The reds, with a black breast and a ginger wing. And [[duck]]the duckwings, with a bar of [[steel]]steel blue across the wing.",
+    "breeding": "His breeding rules: [[old]]never breed two old fowls. [[hens]]Three or four hens to one cock. [[water]]Clean water, grass and gravel.",
+    "end": "Two hundred years on, breeders still [[judge]]judge by these points. [[follow]]Follow {{HOTCOCKER|Hot Cocker}} for more from the old books."
+  }
+}

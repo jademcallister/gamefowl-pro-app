@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" data-stage="portrait">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From the Old Books · The Perfect Game Cock (1823)</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="audio/en/timings.js"></script>
+<script src="../img/art.js"></script>
+<script src="../lib/icons.js"></script>
+<script src="../lib/shorts.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 1, title: 'The Perfect Game Cock (1823)', minutes: 1, language: 'en' };
+const CARD = '1891 card · The Met (CC0)', PLATE = 'Landseer, 1823 · public domain';
+const has = n => typeof ART !== 'undefined' && ART[n];
+// a cone drawn on as the voice says it: apex at the head, base across the vent and belly
+function cone(g, ax, ay, bx1, by1, bx2, by2, t0) {
+  const d = `M${bx1} ${by1}L${ax} ${ay}L${bx2} ${by2}Z`;
+  const p = path(g, d, { fill: 'none', stroke: MARK, 'stroke-width': 9, 'stroke-linejoin': 'round', 'stroke-dasharray': 3000, 'stroke-dashoffset': 3000 });
+  prog(q => p.setAttribute('stroke-dashoffset', 3000 * (1 - q)), t0, .7, out);
+  sfx(BEAT_ID, t0, 'whoosh', .4);
+  return p;
+}
+
+const BEATS = [
+  ['hook', 'The hook', (m, D) => {
+    const s = shot(panel(0), 0, undefined, { bg: DARK });
+    wide(s, 'bbred-cock', [[0, .6, .42, 1.3], [D + .6, .6, .4, 1.5]]);
+    srcTag(s, CARD, 50, 150, 0);
+    word(s, '1823', CX, 1060, m('year'), { size: 230, fill: '#fff', stroke: DARK });
+    band(s, ['The perfect', 'game cock'], 1170, m('perfect'), { size: 76, fill: RED, colour: '#fff' });
+  }, { pre: .3 }],
+
+  ['book', 'The book', (m, D) => {
+    const s = shot(panel(0), 0, undefined, { bg: DARK });
+    const pl = plate(s, 'frontispiece', CX, 760, { w: 1300 });
+    tw(pl, { s: 1.1 }, 0, D + .6, lin);
+    srcTag(s, PLATE, 50, 150, 0);
+    word(s, 'The Game Cock', CX, 360, m('title'), { size: 120, fill: LIGHT });
+    label(s, 'by a Distinguished Amateur', CX, 1150, m('amateur'), { size: 44, fill: LIGHT, colour: DARK });
+    priceTag(s, 290, 1250, '1s. 6d.', m('price'));
+  }],
+
+  ['origin', 'Wild cock of India', (m, D) => {
+    const p = panel(0), cut = m('reds');
+    const a = shot(p, 0, cut, { bg: DARK });
+    wide(a, 'brownred-cock', [[0, .44, .5, 1], [cut + .3, .48, .48, 1.12]]);
+    srcTag(a, CARD, 50, 150, 0);
+    label(a, 'Wild cock of', CX, 300, m('india'), { size: 52, fill: DARK });
+    word(a, 'India', CX, 470, m('india') + .15, { size: 170, fill: '#fff', stroke: DARK });
+    const b = shot(p, cut, undefined, { whip: true, bg: DARK });
+    wide(b, 'bbred-cock', [[cut, .58, .44, 1.25], [D + .6, .6, .42, 1.4]]);
+    srcTag(b, CARD, 50, 150, cut);
+    word(b, 'Dark reds', CX, 1100, cut + .1, { size: 150, fill: '#fff', stroke: DARK });
+    label(b, 'the hardiest of all', CX, 1220, cut + .6, { size: 48, fill: RED, colour: '#fff' });
+  }],
+
+  ['form', 'The ideal bird', (m, D) => {
+    const s = shot(panel(0), 0, undefined, { bg: DARK });
+    const im = wide(s, 'bbred-cock', [[0, .62, .4, 1.6], [D + .6, .62, .4, 1.66]]);
+    srcTag(s, CARD, 50, 150, 0);
+    label(s, 'The ideal bird', CX, 210, .2, { size: 50, fill: DARK });
+    const pts = [['eyes', 'Eyes of fire', 330], ['head', 'Small head', 450], ['beak', 'Strong beak', 570], ['neck', 'Long neck', 690], ['shoulders', 'Broad shoulders', 810]];
+    // one caption slot under the bird: each point replaces the one before
+    pts.forEach(([k, t], i) => {
+      const e = label(s, t, CX, 1200, m(k), { size: 78, fill: RED, colour: '#fff' });
+      hide(e, (i + 1 < pts.length ? m(pts[i + 1][0]) : m('cone')) - .05, .08, lin);
+      sfx(BEAT_ID, m(k), 'tick', .5);
+    });
+    cone(s, 760, 380, 320, 880, 490, 1060, m('cone'));
+    word(s, 'A lengthened cone', CX, 1220, m('cone') + .3, { size: 84, fill: MARK, stroke: DARK });
+  }],
+
+  ['feathers', 'Sound feathers', (m, D) => {
+    const s = shot(panel(0), 0, undefined, { bg: DARK });
+    wide(s, 'duckwing', [[0, .47, .42, 1.9], [D + .6, .53, .45, 2.1]]);
+    srcTag(s, CARD, 50, 150, 0);
+    band(s, ['Short', 'Stiff', 'Glossy'], 380, m('short'), { size: 90, fill: DARK, colour: '#fff', step: .45 });
+    label(s, 'close to the skin', CX, 760, m('close'), { size: 56, fill: RED, colour: '#fff' });
+    stamp(s, 'SOUND', CX, 1100, m('sound'));
+  }],
+
+  ['colours', 'The colours', (m, D) => {
+    const p = panel(0), c2 = m('duck');
+    const a = shot(p, 0, c2, { bg: DARK });
+    wide(a, 'bbred-cock', [[0, .6, .4, 1.3], [c2 + .3, .6, .38, 1.45]]);
+    srcTag(a, CARD, 50, 150, 0);
+    label(a, 'Most admired', CX, 240, .1, { size: 48, fill: DARK });
+    word(a, 'The reds', CX, 1090, m('red'), { size: 150, fill: '#fff', stroke: DARK });
+    label(a, 'black breast, ginger wing', CX, 1210, m('red') + 1, { size: 48, fill: RED, colour: '#fff' });
+    const b = shot(p, c2, undefined, { whip: true, bg: DARK });
+    wide(b, 'duckwing', [[c2, .52, .45, 1.2], [D + .6, .55, .5, 1.7]]);
+    srcTag(b, CARD, 50, 150, c2);
+    word(b, 'Duckwings', CX, 1090, c2 + .1, { size: 150, fill: '#fff', stroke: DARK });
+    label(b, 'a bar of steel blue', CX, 1210, m('steel'), { size: 48, fill: TEAL, colour: '#fff' });
+  }],
+
+  ['breeding', 'Breeding rules', (m, D) => {
+    const p = panel(0), c2 = m('hens');
+    const hen = has('bbred-hen') ? 'bbred-hen' : 'duckwing';
+    const a = shot(p, 0, c2, { bg: DARK });
+    wide(a, 'brownred-cock', [[0, .62, .5, 1.1], [c2 + .3, .66, .5, 1.2]]);
+    srcTag(a, CARD, 50, 150, 0);
+    label(a, 'His breeding rules', CX, 240, .1, { size: 50, fill: DARK });
+    stamp(a, 'NEVER', CX, 640, m('old'));
+    band(a, ['breed two', 'old fowls'], 820, m('old') + .4, { size: 80, fill: DARK, colour: '#fff' });
+    const b = shot(p, c2, undefined, { whip: true, bg: DARK });
+    wide(b, hen, [[c2, .5, .5, 1.1], [D + .6, .5, .48, 1.25]]);
+    srcTag(b, CARD, 50, 150, c2);
+    word(b, '3–4 hens', CX, 420, c2 + .1, { size: 150, fill: '#fff', stroke: DARK });
+    label(b, 'to one cock', CX, 540, c2 + .5, { size: 56, fill: RED, colour: '#fff' });
+    band(b, ['Clean water', 'Grass', 'Gravel'], 900, m('water'), { size: 64, fill: TEAL, colour: '#fff', step: .35 });
+  }],
+
+  ['end', 'Still judged', (m, D) => {
+    const p = panel(0), c2 = m('follow');
+    const a = shot(p, 0, c2, { bg: DARK });
+    wide(a, 'bbred-cock', [[0, .55, .45, 1.1], [c2 + .3, .57, .43, 1.25]]);
+    srcTag(a, CARD, 50, 150, 0);
+    label(a, '200 years on', CX, 980, .1, { size: 56, fill: DARK });
+    word(a, 'Still judged', CX, 1110, m('judge'), { size: 140, fill: '#fff', stroke: DARK });
+    label(a, 'by these points', CX, 1230, m('judge') + .4, { size: 52, fill: RED, colour: '#fff' });
+    const b = shot(p, c2, undefined, { swipe: true, bg: DARK });
+    const pl = plate(b, 'frontispiece', CX, 1000, { w: 860 });
+    tw(pl, { s: 1.06 }, c2, D + 1.5 - c2, lin);
+    label(b, 'Follow', CX, 420, c2 + .15, { size: 56, fill: RED, colour: '#fff' });
+    word(b, 'HOTCOCKER', CX, 600, c2 + .35, { size: 150, fill: LIGHT });
+    label(b, 'more from the old books', CX, 720, c2 + .8, { size: 44, fill: LIGHT, colour: DARK });
+  }],
+].map(shortsBeat);
+
+startShorts();
+</script>
+</body>
+</html>
